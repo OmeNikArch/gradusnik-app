@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Градусник — вызов скорой</title>
+<meta name="description" content="Частная скорая помощь «Градусник», Саратов. Вызов врача на дом в одно нажатие, круглосуточно, анонимно.">
+<meta name="theme-color" content="#1b2a8f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Градусник">
+<style>
+  :root{
+    --blue:#1b2a8f; --blue-deep:#121d66; --red:#e02424; --red-dark:#b91c1c;
+    --bg:#f2f4fb; --ink:#12183a; --muted:#6b7292; --card:#ffffff;
+    --wa:#25d366; --tg:#2aabee;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:"PT Sans","Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);
+    display:flex;flex-direction:column;max-width:520px;margin:0 auto;
+    padding-top:env(safe-area-inset-top)}
+  main{flex:1;overflow-y:auto;padding:0 18px 96px}
+  .view{display:none}
+  .view.active{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+  @media (prefers-reduced-motion: reduce){.view.active{animation:none}}
+
+  .apphead{display:flex;align-items:center;gap:10px;padding:16px 2px 16px}
+  .cross{width:38px;height:38px;border-radius:10px;background:var(--blue);
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .cross svg{width:22px;height:22px}
+  .apphead .t1{font-size:19px;font-weight:800;letter-spacing:.1em;color:var(--blue)}
+  .apphead .t2{font-size:10.5px;letter-spacing:.16em;color:var(--muted)}
+
+  .sos-wrap{display:flex;flex-direction:column;align-items:center;padding:14px 0 6px}
+  .sos{width:min(210px,56vw);aspect-ratio:1;border-radius:50%;border:none;cursor:pointer;
+    background:radial-gradient(circle at 35% 30%, #ff5252, var(--red) 60%, var(--red-dark));
+    color:#fff;font-family:inherit;font-size:21px;font-weight:800;line-height:1.25;
+    box-shadow:0 0 0 14px rgba(224,36,36,.14), 0 0 0 28px rgba(224,36,36,.06), 0 14px 30px rgba(224,36,36,.45);
+    transition:transform .12s ease}
+  .sos:active{transform:scale(.96)}
+  .sos small{display:block;font-size:12.5px;font-weight:700;opacity:.9;margin-top:6px;letter-spacing:.05em}
+  .sos-cap{margin-top:18px;font-size:13px;color:var(--muted);text-align:center;line-height:1.5}
+
+  .addr{margin-top:14px;background:var(--card);border-radius:14px;padding:12px 14px;
+    display:flex;gap:10px;align-items:center;box-shadow:0 2px 10px rgba(18,24,58,.06)}
+  .addr .pin{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:#eef1fb;
+    display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:17px}
+  .addr .a1{font-size:12px;color:var(--muted)}
+  .addr .a2{font-size:14.5px;font-weight:700;word-break:break-word}
+  .addr .chg{margin-left:auto;font-size:12.5px;color:var(--blue);font-weight:700;cursor:pointer;
+    white-space:nowrap;background:none;border:none;font-family:inherit}
+
+  .msgs{display:flex;gap:10px;margin-top:12px}
+  .msgs a{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
+    padding:12px 8px;border-radius:12px;font-size:13.5px;font-weight:700;text-decoration:none;color:#fff}
+  .msgs .wa{background:var(--wa)}
+  .msgs .tg{background:var(--tg)}
+
+  h3.sec{font-size:16px;margin:16px 2px 10px}
+  .item{background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:9px;
+    display:flex;align-items:center;gap:11px;box-shadow:0 2px 10px rgba(18,24,58,.05)}
+  .item.tap{cursor:pointer}
+  .item .ic{width:36px;height:36px;flex:0 0 auto;border-radius:9px;background:#eef1fb;
+    display:flex;align-items:center;justify-content:center;font-size:17px}
+  .item .nm{font-size:14.5px;font-weight:700;line-height:1.25}
+  .item .ds{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.35}
+  .item .go{margin-left:auto;color:var(--muted)}
+  .tag{display:inline-block;font-size:10.5px;font-weight:700;color:var(--red);
+    border:1px solid var(--red);border-radius:20px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+
+  .hero{background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;
+    border-radius:16px;padding:16px;margin-top:14px}
+  .hero h4{font-size:16px;margin-bottom:6px}
+  .hero p{font-size:13px;line-height:1.5;opacity:.94}
+  .hero .cta{margin-top:12px;display:inline-block;background:#fff;color:var(--blue);
+    font-weight:800;font-size:13.5px;border-radius:10px;padding:10px 16px;text-decoration:none}
+
+  .empty{font-size:13px;color:var(--muted);line-height:1.5;background:var(--card);
+    border-radius:14px;padding:14px;box-shadow:0 2px 10px rgba(18,24,58,.05)}
+  .redial{margin-left:auto;font-size:12.5px;font-weight:700;color:#fff;background:var(--red);
+    border:none;border-radius:9px;padding:8px 12px;font-family:inherit;cursor:pointer}
+
+  nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:520px;
+    height:calc(64px + env(safe-area-inset-bottom));background:#fff;
+    border-top:1px solid #e3e6f2;display:flex;padding-bottom:env(safe-area-inset-bottom)}
+  nav button{flex:1;border:none;background:none;font-family:inherit;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    font-size:10.5px;font-weight:700;color:var(--muted)}
+  nav button.on{color:var(--blue)}
+  nav button:focus-visible{outline:2px solid var(--blue);outline-offset:-2px;border-radius:8px}
+  nav .i{font-size:20px;line-height:1}
+</style>
+</head>
+<body>
+  <main>
+
+    <!-- ВЫЗОВ -->
+    <section class="view active" id="v-main">
+      <div class="apphead">
+        <div class="cross"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M9 2h6v7h7v6h-7v7H9v-7H2V9h7z"/></svg></div>
+        <div><div class="t1">ГРАДУСНИК</div><div class="t2">ЧАСТНАЯ СКОРАЯ ПОМОЩЬ · САРАТОВ</div></div>
+      </div>
+      <div class="sos-wrap">
+        <button class="sos" onclick="callAmbulance('Вызов скорой')">ВЫЗВАТЬ<br>СКОРУЮ<small>одно нажатие — звонок</small></button>
+        <div class="sos-cap">Круглосуточно · Анонимно<br>8 (8452) 988-111 · 8 (9675) 008-111</div>
+      </div>
+      <div class="addr">
+        <div class="pin">📍</div>
+        <div><div class="a1">Адрес выезда</div><div class="a2" id="addr-text">не указан — добавьте заранее</div></div>
+        <button class="chg" onclick="editAddress()">Изменить</button>
+      </div>
+      <div class="msgs">
+        <a class="wa" href="https://wa.me/79675008111?text=Здравствуйте!%20Нужна%20помощь." target="_blank" rel="noopener">🟢 WhatsApp</a>
+        <a class="tg" href="https://t.me/+79675008111" target="_blank" rel="noopener">✈️ Telegram</a>
+      </div>
+    </section>
+
+    <!-- УСЛУГИ -->
+    <section class="view" id="v-services">
+      <h3 class="sec">Выезд на дом</h3>
+      <div class="item tap" onclick="callAmbulance('Детокс-капельница')"><div class="ic">💧</div>
+        <div><div class="nm">Детокс-капельница <span class="tag">анонимно</span></div>
+        <div class="ds">Снятие интоксикации и похмельного синдрома</div></div><div class="go">›</div></div>
+      <div class="item tap" onclick="callAmbulance('Вызов врача')"><div class="ic">🌡️</div>
+        <div><div class="nm">Температура, ОРВИ, грипп</div>
+        <div class="ds">Осмотр врача, инъекции, назначения</div></div><div class="go">›</div></div>
+      <div class="item tap" onclick="callAmbulance('Давление/ЭКГ')"><div class="ic">❤️</div>
+        <div><div class="nm">Давление и ЭКГ на дому</div>
+        <div class="ds">Диагностика и стабилизация состояния</div></div><div class="go">›</div></div>
+      <div class="item tap" onclick="callAmbulance('Перевозка')"><div class="ic">🚑</div>
+        <div><div class="nm">Перевозка пациентов</div>
+        <div class="ds">В лечебные учреждения города, с сопровождением</div></div><div class="go">›</div></div>
+      <h3 class="sec">Амбулаторно, ул. Большая Садовая, 54</h3>
+      <div class="item"><div class="ic">🧠</div>
+        <div><div class="nm">Приём психиатра</div><div class="ds">По записи, конфиденциально</div></div></div>
+      <div class="item"><div class="ic">🩺</div>
+        <div><div class="nm">Приём терапевта</div><div class="ds">Осмотр, назначения, справки</div></div></div>
+    </section>
+
+    <!-- СТАЦИОНАР -->
+    <section class="view" id="v-stac">
+      <h3 class="sec">Собственный стационар</h3>
+      <div class="hero">
+        <h4>Разместим пациента под наблюдением 24/7</h4>
+        <p>Свой стационар в Саратове: детоксикация, восстановительная терапия,
+        круглосуточное наблюдение врача и медсестёр. Анонимно, без постановки на учёт.</p>
+        <a class="cta" href="tel:+78452988111" onclick="logCall('Стационар')">Узнать о размещении</a>
+      </div>
+      <div class="item" style="margin-top:12px"><div class="ic">🛏️</div>
+        <div><div class="nm">Комфортные палаты</div><div class="ds">Питание и уход включены</div></div></div>
+      <div class="item"><div class="ic">👨‍⚕️</div>
+        <div><div class="nm">Врач всегда рядом</div><div class="ds">Контроль состояния круглосуточно</div></div></div>
+      <div class="item"><div class="ic">🚑</div>
+        <div><div class="nm">Доставка в стационар</div><div class="ds">Бригада привезёт из дома в клинику</div></div></div>
+    </section>
+
+    <!-- ПРОФИЛЬ -->
+    <section class="view" id="v-hist">
+      <h3 class="sec">Мои вызовы</h3>
+      <div id="hist-list"></div>
+      <h3 class="sec">Контакты</h3>
+      <div class="item tap" onclick="callAmbulance('Звонок из контактов')"><div class="ic">📞</div>
+        <div><div class="nm">8 (8452) 988-111</div><div class="ds">Круглосуточный вызов</div></div></div>
+      <div class="item tap" onclick="callNumber('+79675008111','Звонок из контактов')"><div class="ic">📱</div>
+        <div><div class="nm">8 (9675) 008-111</div><div class="ds">Мобильный, WhatsApp, Telegram</div></div></div>
+      <div class="item"><div class="ic">📍</div>
+        <div><div class="nm">ул. Большая Садовая, 54</div><div class="ds">РНЛ: Л041-01020-64/00742789 · gradusnikmed.ru</div></div></div>
+    </section>
+
+  </main>
+
+  <nav aria-label="Разделы">
+    <button class="on" data-v="v-main"><span class="i">🚨</span>Вызов</button>
+    <button data-v="v-services"><span class="i">🩺</span>Услуги</button>
+    <button data-v="v-stac"><span class="i">🛏️</span>Стационар</button>
+    <button data-v="v-hist"><span class="i">👤</span>Профиль</button>
+  </nav>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const PHONE = '+78452988111';
+
+  function show(id){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    $(id).classList.add('active');
+    document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b.dataset.v===id));
+    if(id==='v-hist') renderHistory();
+  }
+  document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click', ()=>show(b.dataset.v)));
+  function openFromHash(){
+    const id = location.hash.slice(1);
+    if(id && document.getElementById(id)) show(id);
+  }
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
+
+  // Адрес выезда: хранится на телефоне, никуда не отправляется
+  function loadAddress(){
+    const a = localStorage.getItem('gradusnik_addr');
+    if(a) $('addr-text').textContent = a;
+  }
+  function editAddress(){
+    const cur = localStorage.getItem('gradusnik_addr') || '';
+    const a = prompt('Адрес выезда (улица, дом, квартира, подъезд/этаж):', cur);
+    if(a !== null){
+      const v = a.trim();
+      if(v){ localStorage.setItem('gradusnik_addr', v); }
+      else { localStorage.removeItem('gradusnik_addr'); }
+      loadAddress();
+      if(!v) $('addr-text').textContent = 'не указан — добавьте заранее';
+    }
+  }
+  loadAddress();
+
+  // История вызовов: локально на телефоне
+  function logCall(kind){
+    try{
+      const h = JSON.parse(localStorage.getItem('gradusnik_hist') || '[]');
+      h.unshift({kind, at: new Date().toLocaleString('ru-RU', {day:'numeric', month:'long', hour:'2-digit', minute:'2-digit'})});
+      localStorage.setItem('gradusnik_hist', JSON.stringify(h.slice(0, 20)));
+    }catch(e){}
+  }
+  function renderHistory(){
+    const box = $('hist-list');
+    let h = [];
+    try{ h = JSON.parse(localStorage.getItem('gradusnik_hist') || '[]'); }catch(e){}
+    if(!h.length){
+      box.innerHTML = '<div class="empty">Здесь появятся ваши вызовы — с кнопкой «Повторить». История хранится только на этом телефоне.</div>';
+      return;
+    }
+    box.innerHTML = h.map(x =>
+      '<div class="item"><div class="ic">📞</div><div><div class="nm">'+x.kind+
+      '</div><div class="ds">'+x.at+'</div></div><button class="redial" onclick="callAmbulance(\''+x.kind.replace(/'/g,'')+'\')">Повторить</button></div>'
+    ).join('');
+  }
+
+  function callNumber(num, kind){
+    logCall(kind);
+    location.href = 'tel:' + num;
+  }
+  function callAmbulance(kind){ callNumber(PHONE, kind); }
+
+  // Офлайн-режим: приложение открывается без интернета (звонок работает всегда)
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "Градусник — вызов скорой",
+  "short_name": "Градусник",
+  "description": "Частная скорая помощь «Градусник», Саратов. Вызов врача на дом в одно нажатие, круглосуточно, анонимно.",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f4fb",
+  "theme_color": "#1b2a8f",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Вызвать скорую",
+      "short_name": "Вызов",
+      "url": "./#v-main",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
