@@ -1,5 +1,5 @@
 // Офлайн-кэш: приложение открывается без интернета
-const CACHE = 'gradusnik-v1';
+const CACHE = 'gradusnik-v2';
 const ASSETS = [
   './',
   './index.html',
