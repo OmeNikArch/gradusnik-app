@@ -13,172 +13,303 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Градусник">
 <style>
+  /* Самохостинг шрифтов: PWA работает офлайн, внешние шрифты недоступны */
+  @font-face{font-family:'Inter';font-style:normal;font-weight:400 700;font-display:swap;
+    src:url(fonts/inter-cyr.woff2) format('woff2');
+    unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:400 700;font-display:swap;
+    src:url(fonts/inter-lat.woff2) format('woff2');
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:'Inter Tight';font-style:normal;font-weight:700 900;font-display:swap;
+    src:url(fonts/intertight-cyr.woff2) format('woff2');
+    unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+  @font-face{font-family:'Inter Tight';font-style:normal;font-weight:700 900;font-display:swap;
+    src:url(fonts/intertight-lat.woff2) format('woff2');
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
   :root{
-    --blue:#0000bb; --blue-deep:#000080; --red:#e02424; --red-dark:#b91c1c;
-    --bg:#f2f4fb; --ink:#12183a; --muted:#6b7292; --card:#ffffff;
-    --wa:#25d366; --tg:#2aabee;
+    --ink:#0F2A6B; --brand:#0000BB; --red:#D92D20; --red-dk:#B42318;
+    --muted:#475569; --line-lt:#D9E2F2; --wash:#EFF4FB;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%}
-  body{font-family:"PT Sans","Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);
+  html{height:100%}
+  body{min-height:100%;background:#E9EFF7;font-family:'Inter',sans-serif;color:var(--ink);
     display:flex;flex-direction:column;max-width:520px;margin:0 auto;
+    background-clip:padding-box}
+  body::before{content:"";position:fixed;inset:0;left:50%;transform:translateX(-50%);
+    width:100%;max-width:520px;background:#FFFFFF;z-index:-1}
+
+  /* ── Шапка: три ячейки сетки ── */
+  header{position:sticky;top:0;z-index:20;background:#FFFFFF;
+    display:flex;align-items:stretch;border-bottom:2px solid var(--ink);
     padding-top:env(safe-area-inset-top)}
-  main{flex:1;overflow-y:auto;padding:0 18px 96px}
+  .h-logo{padding:11px 13px;display:flex;align-items:center;border-right:1px solid var(--ink)}
+  .h-logo svg{width:38px;height:38px;display:block}
+  .h-name{flex:1;padding:11px 13px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+  .brand-name{font-family:'Inter Tight',sans-serif;font-weight:900;font-size:20px;letter-spacing:-.01em;text-transform:uppercase;line-height:1}
+  .brand-sub{font-size:8px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:5px;white-space:nowrap;overflow:hidden}
+  .h-meta{border-left:1px solid var(--ink);padding:11px 14px;display:flex;flex-direction:column;justify-content:center;text-align:right}
+  .h-meta b{font-family:'Inter Tight',sans-serif;font-weight:900;font-size:16px;color:var(--brand);line-height:1}
+  .h-meta span{font-size:8px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+  main{flex:1;padding:12px 20px calc(86px + env(safe-area-inset-bottom))}
   .view{display:none}
   .view.active{display:block;animation:fade .18s ease}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
   @media (prefers-reduced-motion: reduce){.view.active{animation:none}}
 
-  .apphead{display:flex;align-items:center;gap:10px;padding:16px 2px 16px}
-  .cross{width:38px;height:38px;border-radius:10px;background:var(--blue);
-    display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-  .cross svg{width:22px;height:22px}
-  .apphead .t1{font-size:19px;font-weight:800;letter-spacing:.1em;color:var(--blue)}
-  .apphead .t2{font-size:10.5px;letter-spacing:.16em;color:var(--muted)}
+  /* ── Секционная линейка с номером ── */
+  .sec-lb{display:flex;align-items:baseline;gap:10px;font-size:9px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink)}
+  .sec-lb::after{content:"";flex:1;height:1px;background:var(--ink);align-self:center;min-width:24px}
+  .sec-lb i{font-style:normal;color:var(--brand)}
+  .view > .sec-lb + .sec-lb, .sec-lb.later{margin-top:20px}
 
-  .sos-wrap{display:flex;flex-direction:column;align-items:center;padding:14px 0 6px}
-  .sos{width:min(210px,56vw);aspect-ratio:1;border-radius:50%;border:none;cursor:pointer;
-    background:radial-gradient(circle at 35% 30%, #ff5252, var(--red) 60%, var(--red-dark));
-    color:#fff;font-family:inherit;font-size:21px;font-weight:800;line-height:1.25;
-    box-shadow:0 0 0 14px rgba(224,36,36,.14), 0 0 0 28px rgba(224,36,36,.06), 0 14px 30px rgba(224,36,36,.45);
-    transition:transform .12s ease}
-  .sos:active{transform:scale(.96)}
-  .sos small{display:block;font-size:12.5px;font-weight:700;opacity:.9;margin-top:6px;letter-spacing:.05em}
-  .sos-cap{margin-top:18px;font-size:13px;color:var(--muted);text-align:center;line-height:1.5}
+  /* ── SOS: круглая красная кнопка на осевой линейке ── */
+  .sos-zone{position:relative;height:228px;margin-top:6px;display:flex;align-items:center;justify-content:center}
+  .sos-zone::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--ink);opacity:.22}
+  .sos-o{position:absolute;border-radius:50%;pointer-events:none;background:#FFFFFF}
+  .sos-o.o1{width:206px;height:206px;border:2px solid var(--red)}
+  .sos-o.o2{width:220px;height:220px;border:1px solid rgba(217,45,32,.35)}
+  .sos{position:relative;width:190px;height:190px;border-radius:50%;background:var(--red);border:0;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-decoration:none;
+    transition:background .15s ease,transform .15s ease}
+  .sos:active{background:var(--red-dk);transform:scale(.97)}
+  .sos:focus-visible{outline:3px solid var(--brand);outline-offset:4px}
+  .sos b{font-family:'Inter Tight',sans-serif;font-weight:900;font-size:34px;line-height:.98;letter-spacing:-.01em;color:#FFFFFF;text-transform:uppercase;text-align:center}
+  .sos svg{width:26px;height:26px;stroke:#FFFFFF;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .sos span{font-size:8.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.88)}
+  .sos-hint{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:8px 2px 0;white-space:nowrap}
+  .sos-hint i{font-style:normal;color:var(--brand)}
 
-  .addr{margin-top:14px;background:var(--card);border-radius:14px;padding:12px 14px;
-    display:flex;gap:10px;align-items:center;box-shadow:0 2px 10px rgba(18,24,58,.06)}
-  .addr .pin{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:#eef1fb;
-    display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:17px}
-  .addr .a1{font-size:12px;color:var(--muted)}
-  .addr .a2{font-size:14.5px;font-weight:700;word-break:break-word}
-  .addr .chg{margin-left:auto;font-size:12.5px;color:var(--blue);font-weight:700;cursor:pointer;
-    white-space:nowrap;background:none;border:none;font-family:inherit}
+  /* ── Телефоны ── */
+  .phone-block{margin-top:20px}
+  .phone-main{display:block;font-family:'Inter Tight',sans-serif;font-weight:900;font-size:clamp(29px,9.6vw,38px);letter-spacing:-.02em;color:var(--ink);text-decoration:none;line-height:1.05;padding:6px 0 4px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .phone-row2{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--ink);margin-top:4px}
+  .phone-alt{font-family:'Inter Tight',sans-serif;font-weight:700;font-size:16px;color:var(--ink);text-decoration:none;padding:12px 0;min-height:44px;display:flex;align-items:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .badges{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);white-space:nowrap}
+  .badges i{font-style:normal;color:var(--brand);padding:0 6px;font-weight:900}
 
-  .msgs{display:flex;gap:10px;margin-top:12px}
-  .msgs a{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
-    padding:12px 8px;border-radius:12px;font-size:13.5px;font-weight:700;text-decoration:none;color:#fff}
-  .msgs .wa{background:var(--wa)}
-  .msgs .tg{background:var(--tg)}
+  /* ── Дуотон-фото ── */
+  .figure{margin-top:16px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+  .fig-img{height:86px;background:url(data:image/jpeg;base64,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) center 42%/cover no-repeat;filter:grayscale(1) contrast(1.08);position:relative}
+  .fig-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,187,.38),rgba(0,0,187,.2))}
+  .fig-cap{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 2px;font-size:8.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  .fig-cap i{font-style:normal;color:var(--brand)}
 
-  h3.sec{font-size:16px;margin:16px 2px 10px}
-  .item{background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:9px;
-    display:flex;align-items:center;gap:11px;box-shadow:0 2px 10px rgba(18,24,58,.05)}
-  .item.tap{cursor:pointer}
-  .item .ic{width:36px;height:36px;flex:0 0 auto;border-radius:9px;background:#eef1fb;
-    display:flex;align-items:center;justify-content:center;font-size:17px}
-  .item .nm{font-size:14.5px;font-weight:700;line-height:1.25}
-  .item .ds{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.35}
-  .item .go{margin-left:auto;color:var(--muted)}
-  .tag{display:inline-block;font-size:10.5px;font-weight:700;color:var(--red);
-    border:1px solid var(--red);border-radius:20px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+  /* ── Адрес ── */
+  .addr{display:flex;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px solid var(--ink);margin-top:8px}
+  .addr-tx{flex:1;min-width:0}
+  .addr-lb{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .addr-vl{font-size:13px;font-weight:500;color:var(--ink);margin-top:4px;word-break:break-word}
+  .addr-btn{flex:none;min-height:44px;display:flex;align-items:center;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px;padding:0 4px;background:none;border:0;cursor:pointer;font-family:inherit}
+  .addr-btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 
-  .hero{background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;
-    border-radius:16px;padding:16px;margin-top:14px}
-  .hero h4{font-size:16px;margin-bottom:6px}
-  .hero p{font-size:13px;line-height:1.5;opacity:.94}
-  .hero .cta{margin-top:12px;display:inline-block;background:#fff;color:var(--blue);
-    font-weight:800;font-size:13.5px;border-radius:10px;padding:10px 16px;text-decoration:none}
+  /* ── Мессенджеры ── */
+  .msgr{display:flex;border:1px solid var(--ink);margin-top:10px}
+  .msgr a{flex:1;min-height:52px;display:flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);transition:background .15s ease}
+  .msgr a:active{background:var(--wash)}
+  .msgr a + a{border-left:1px solid var(--ink)}
+  .msgr svg{width:18px;height:18px;fill:var(--ink);flex:none}
 
-  .empty{font-size:13px;color:var(--muted);line-height:1.5;background:var(--card);
-    border-radius:14px;padding:14px;box-shadow:0 2px 10px rgba(18,24,58,.05)}
-  .redial{margin-left:auto;font-size:12.5px;font-weight:700;color:#fff;background:var(--red);
-    border:none;border-radius:9px;padding:8px 12px;font-family:inherit;cursor:pointer}
+  /* ── Строка доверия ── */
+  .trust{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;font-size:8.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);white-space:nowrap;text-align:center}
+  .trust::before,.trust::after{content:"";flex:1;height:1px;background:var(--ink);min-width:8px}
+  .trust.wrap{white-space:normal}
 
-  nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:520px;
-    height:calc(64px + env(safe-area-inset-bottom));background:#fff;
-    border-top:1px solid #e3e6f2;display:flex;padding-bottom:env(safe-area-inset-bottom)}
-  nav button{flex:1;border:none;background:none;font-family:inherit;cursor:pointer;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-    font-size:10.5px;font-weight:700;color:var(--muted)}
-  nav button.on{color:var(--blue)}
-  nav button:focus-visible{outline:2px solid var(--blue);outline-offset:-2px;border-radius:8px}
-  nav .i{font-size:20px;line-height:1}
+  /* ── Строки списков (услуги, стационар, профиль) ── */
+  .rows{margin-top:4px}
+  .row{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line-lt);width:100%;text-align:left;background:none;border-top:0;border-left:0;border-right:0;font-family:inherit;color:var(--ink)}
+  button.row{cursor:pointer}
+  button.row:active{background:var(--wash)}
+  button.row:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+  .row-tx{flex:1;min-width:0}
+  .row .nm{font-size:14.5px;font-weight:700;line-height:1.25;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .row .ds{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
+  .row .go{flex:none;color:var(--brand);display:flex}
+  .row .go svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .row .num{flex:none;font-family:'Inter Tight',sans-serif;font-weight:800;font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
+  .tag{display:inline-block;font-size:8px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);border:1px solid var(--brand);padding:2px 6px}
+
+  /* ── Стационар: синяя плита ── */
+  .stac-hero{background:var(--brand);color:#FFFFFF;padding:18px 20px 20px;margin-top:8px}
+  .stac-hero h2{font-family:'Inter Tight',sans-serif;font-weight:900;font-size:21px;line-height:1.08;letter-spacing:-.01em;text-transform:uppercase}
+  .stac-hero p{font-size:13px;line-height:1.55;margin-top:10px;color:rgba(255,255,255,.92)}
+  .stac-cta{display:inline-flex;align-items:center;min-height:44px;margin-top:14px;border:2px solid #FFFFFF;padding:0 18px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;transition:background .15s ease}
+  .stac-cta:active{background:rgba(255,255,255,.14)}
+
+  /* ── История ── */
+  .empty{font-size:12.5px;color:var(--muted);line-height:1.5;border:1px solid var(--line-lt);padding:12px 14px;margin-top:4px}
+  .redial{flex:none;background:var(--red);color:#FFFFFF;border:0;cursor:pointer;font-family:inherit;font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:10px 13px;min-height:38px;transition:background .15s ease}
+  .redial:active{background:var(--red-dk)}
+  .redial:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+  /* ── Навигация ── */
+  nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:520px;z-index:20;
+    display:flex;border-top:1px solid var(--ink);background:#FFFFFF;
+    padding-bottom:env(safe-area-inset-bottom)}
+  nav button{flex:1;min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    background:none;border:0;cursor:pointer;font-family:inherit;
+    font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);position:relative}
+  nav button + button{border-left:1px solid var(--line-lt)}
+  nav button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  nav button.on{color:var(--brand)}
+  nav button.on::before{content:"";position:absolute;top:-1px;left:0;right:0;height:3px;background:var(--brand)}
+  nav button:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
 </style>
 </head>
 <body>
+  <header>
+    <div class="h-logo"><svg xmlns="http://www.w3.org/2000/svg" width="213" height="213" viewBox="0 0 213 213"><g transform="translate(-893.5,-893.5)"><defs><clipPath id="clip-0"><path clip-rule="nonzero" d="M 893.5 894 L 1106 894 L 1106 1106 L 893.5 1106 Z M 893.5 894 "/></clipPath></defs><g clip-path="url(#clip-0)"><path fill-rule="evenodd" fill="#0000bb" d="M 1057.34 999.96 L 1105.82 971.31 L 1077.05 921.6 L 1027.42 950.27 L 1027.42 894.08 L 971 894.08 L 971 950.21 L 922.54 921.57 L 893.75 971.31 L 942.23 999.96 L 893.71 1027.52 L 922.54 1077.31 L 971 1048.68 L 971 1105.96 L 1028.57 1105.96 L 1028.57 1048.68 L 1077.03 1077.31 L 1105.85 1027.52 Z M 1057.34 999.96 "/></g><path fill="#fff" d="M 975.59 1101.39 L 1023.95 1101.39 L 1023.95 1040.64 L 1075.36 1071.02 L 1099.52 1029.27 L 1048.14 1000.07 L 1099.54 969.7 L 1075.35 927.93 L 1022.8 958.29 L 1022.8 898.72 L 975.59 898.72 L 975.59 958.31 L 924.18 927.94 L 900 969.7 L 951.4 1000.07 L 900.02 1029.27 L 924.18 1071.02 L 975.59 1040.64 Z M 1026.25 1103.69 L 973.29 1103.69 L 973.29 1044.68 L 923.36 1074.18 L 896.86 1028.41 L 946.8 1000.03 L 896.87 970.52 L 923.36 924.77 L 973.29 954.28 L 973.29 896.41 L 1025.1 896.41 L 1025.1 954.3 L 1076.19 924.78 L 1102.67 970.52 L 1052.73 1000.03 L 1102.68 1028.41 L 1076.18 1074.18 L 1026.25 1044.68 Z M 1026.25 1103.69 "/><path fill="#fff" d="M 995.89 973.73 C 995.82 978.25 995.75 982.78 995.68 987.31 C 995.68 987.41 995.62 987.51 995.52 987.55 C 994.44 988 993.51 988.3 992.82 988.49 C 990.87 989.05 989.8 989.34 988.56 989 C 987.68 988.76 987.03 988.29 986.62 987.93 C 986.56 987.88 986.48 987.87 986.42 987.91 C 985.96 988.2 985.2 988.59 984.21 988.72 C 983.58 988.81 981.94 989.04 980.6 987.94 C 979.35 986.91 979.17 985.38 979.16 984.68 C 979.15 984.54 978.99 984.47 978.89 984.55 C 978.11 985.18 976.99 985.85 975.55 986.18 C 974.87 986.33 971.91 986.99 970.09 985.3 C 969.21 984.48 968.86 983.36 968.84 983.3 C 968.68 982.8 968.64 982.35 968.64 982.01 C 968.64 981.88 968.52 981.8 968.41 981.86 C 967.78 982.16 966.29 982.72 964.53 982.24 C 963.95 982.08 962.64 981.74 961.8 980.48 C 961.15 979.5 961.11 978.48 961.13 977.96 C 961.14 977.86 961.04 977.77 960.94 977.79 C 960.04 977.96 958.81 978.12 957.35 978.07 C 956.14 978.03 953.95 977.93 951.56 976.73 C 949.39 975.64 947.98 974.11 947.13 972.96 C 946.9 972.64 947.13 972.2 947.52 972.21 C 947.78 972.21 947.95 972.21 948.04 972.21 C 948.66 972.22 949.28 972.23 949.9 972.23 C 951.23 972.25 952.56 972.26 953.89 972.27 C 956.52 972.27 959.15 972.24 961.79 972.29 C 964.4 972.34 967.01 972.41 969.63 972.27 C 971.97 972.15 974.3 971.88 976.59 971.36 C 980.04 970.57 983.33 969.18 986.8 968.49 C 987.93 968.26 989.12 968.13 990.15 968.76 C 991.4 969.52 991.81 970.85 992.36 972.12 C 992.53 972.53 992.74 972.95 993.09 973.21 C 993.54 973.55 994.11 973.59 994.65 973.59 C 994.75 973.59 995.39 973.59 995.71 973.56 C 995.81 973.55 995.89 973.63 995.89 973.73 "/><path fill="#fff" d="M 1003.59 973.73 C 1003.66 978.25 1003.73 982.78 1003.79 987.31 C 1003.79 987.41 1003.86 987.51 1003.96 987.55 C 1005.04 988 1005.97 988.3 1006.66 988.49 C 1008.61 989.05 1009.68 989.34 1010.91 989 C 1011.8 988.76 1012.45 988.29 1012.86 987.93 C 1012.91 987.88 1013 987.87 1013.06 987.91 C 1013.52 988.2 1014.27 988.59 1015.27 988.72 C 1015.9 988.81 1017.54 989.04 1018.88 987.94 C 1020.13 986.91 1020.31 985.38 1020.32 984.68 C 1020.33 984.54 1020.48 984.47 1020.59 984.55 C 1021.37 985.18 1022.48 985.85 1023.93 986.18 C 1024.61 986.33 1027.57 986.99 1029.39 985.3 C 1030.27 984.48 1030.62 983.36 1030.64 983.3 C 1030.79 982.8 1030.84 982.35 1030.84 982.01 C 1030.84 981.88 1030.96 981.8 1031.07 981.86 C 1031.7 982.16 1033.19 982.72 1034.95 982.24 C 1035.53 982.08 1036.84 981.74 1037.68 980.48 C 1038.33 979.5 1038.37 978.48 1038.34 977.96 C 1038.34 977.86 1038.43 977.77 1038.54 977.79 C 1039.44 977.96 1040.67 978.12 1042.12 978.07 C 1043.34 978.03 1045.53 977.93 1047.91 976.73 C 1050.08 975.64 1051.5 974.11 1052.34 972.96 C 1052.57 972.64 1052.35 972.2 1051.96 972.21 C 1051.7 972.21 1051.53 972.21 1051.44 972.21 C 1050.82 972.22 1050.2 972.23 1049.58 972.23 C 1048.25 972.25 1046.92 972.26 1045.59 972.27 C 1042.96 972.27 1040.32 972.24 1037.7 972.29 C 1035.08 972.34 1032.46 972.41 1029.85 972.27 C 1027.51 972.15 1025.18 971.88 1022.89 971.36 C 1019.44 970.57 1016.14 969.18 1012.68 968.49 C 1011.55 968.26 1010.36 968.13 1009.32 968.76 C 1008.08 969.52 1007.66 970.85 1007.12 972.12 C 1006.95 972.53 1006.74 972.95 1006.38 973.21 C 1005.94 973.55 1005.37 973.59 1004.83 973.59 C 1004.73 973.59 1004.09 973.59 1003.77 973.56 C 1003.67 973.55 1003.59 973.63 1003.59 973.73 "/><path fill="#fff" d="M 1005 967.65 C 1005 964.56 1002.32 962.1 999.16 962.46 C 996.88 962.71 994.99 964.49 994.61 966.75 C 994.22 969.07 995.36 971.16 997.18 972.2 C 997.2 972.21 997.2 972.22 997.2 972.24 C 997.17 986.62 997.11 1068.17 999.95 1068.17 C 1002.8 1068.17 1002.48 986.36 1002.4 972.2 C 1002.4 972.19 1002.41 972.17 1002.42 972.16 C 1003.96 971.25 1005 969.57 1005 967.65 "/><path fill="#fff" d="M 1004.07 1009.83 C 1006.57 1009.27 1009.09 1008.71 1011.6 1008.16 C 1011.61 1008.15 1011.63 1008.16 1011.64 1008.17 C 1011.98 1008.56 1012.44 1009.17 1012.8 1010 C 1012.91 1010.25 1014.09 1013.05 1012.85 1015.74 C 1012.18 1017.19 1011.14 1017.91 1009.47 1019.03 C 1008.71 1019.54 1006.01 1021.28 1001.34 1022.59 C 998.65 1023.36 997.36 1023.39 996.16 1024.73 C 995.8 1025.12 994.73 1026.3 994.98 1027.88 C 995.22 1029.44 996.59 1030.27 996.96 1030.48 C 997 1030.49 996.99 1030.54 996.96 1030.55 C 995.45 1031.42 993.94 1032.28 992.43 1033.14 C 992.41 1033.15 992.4 1033.15 992.39 1033.15 C 991.77 1032.94 990.01 1032.26 988.91 1030.45 C 987.25 1027.69 988.55 1024.68 988.84 1024.05 C 989.81 1021.98 991.51 1020.97 992.94 1020.12 C 994.72 1019.06 996.5 1018.54 998.73 1017.89 C 1000.74 1017.31 1001.55 1017.25 1002.87 1016.44 C 1003.81 1015.86 1005.04 1015.08 1005.46 1013.61 C 1005.57 1013.26 1005.96 1011.67 1005 1010.58 C 1004.7 1010.23 1004.34 1010.03 1004.06 1009.92 C 1004.02 1009.9 1004.02 1009.84 1004.07 1009.83 "/><path fill="#fff" d="M 1002.83 1023.51 C 1004.41 1022.87 1005.99 1022.23 1007.57 1021.6 C 1007.59 1021.59 1007.6 1021.59 1007.61 1021.6 C 1008.1 1021.86 1008.86 1022.35 1009.5 1023.22 C 1010.48 1024.55 1010.57 1025.93 1010.62 1026.76 C 1010.65 1027.41 1010.76 1029.52 1009.43 1031.38 C 1008.29 1032.99 1006.64 1033.59 1004.5 1034.37 C 1003.42 1034.76 1002.73 1034.89 999.54 1035.96 C 998.84 1036.2 997.74 1036.59 996.93 1037.6 C 996.64 1037.96 996.18 1038.56 996.27 1039.34 C 996.35 1039.96 996.75 1040.39 996.96 1040.58 C 996.98 1040.6 996.98 1040.64 996.95 1040.65 C 996.21 1041.11 995.46 1041.56 994.71 1042.01 C 994.09 1042.38 993.48 1042.75 992.86 1043.11 C 992.84 1043.11 992.83 1043.11 992.81 1043.1 C 992.3 1042.72 991.25 1041.82 990.82 1040.34 C 990.03 1037.65 991.94 1035.29 992.38 1034.75 C 993.72 1033.11 995.44 1032.43 996.27 1032.11 C 998.53 1031.25 999.44 1031.83 1001.48 1030.69 C 1002.32 1030.22 1003.27 1029.67 1003.78 1028.54 C 1004.45 1027.01 1003.86 1025.45 1003.74 1025.13 C 1003.47 1024.42 1003.09 1023.9 1002.81 1023.58 C 1002.79 1023.55 1002.8 1023.52 1002.83 1023.51 "/><path fill="#fff" d="M 1002.59 1036.29 C 1003.94 1035.78 1005.3 1035.27 1006.66 1034.77 C 1006.68 1034.76 1006.7 1034.76 1006.71 1034.78 C 1007.02 1035.28 1007.45 1036.11 1007.63 1037.22 C 1007.71 1037.69 1007.99 1039.64 1006.9 1041.38 C 1006.13 1042.61 1005.06 1043.14 1003.01 1044.16 C 1000.88 1045.22 999.47 1045.73 999.47 1045.73 C 998.16 1046.2 997.34 1046.38 997.07 1047.08 C 996.93 1047.46 997.02 1047.96 997.21 1048.95 C 997.43 1050.09 997.61 1050.32 997.45 1050.55 C 997.1 1051.07 995.59 1050.89 994.54 1050.24 C 993.43 1049.55 992.52 1048.16 992.62 1046.7 C 992.77 1044.62 994.87 1043.39 995.75 1042.88 C 996.32 1042.54 997.55 1042.1 999.99 1041.21 C 1000.99 1040.85 1001.81 1040.57 1002.45 1039.75 C 1002.68 1039.46 1003.19 1038.8 1003.15 1037.88 C 1003.12 1037.13 1002.75 1036.6 1002.56 1036.36 C 1002.54 1036.34 1002.55 1036.3 1002.59 1036.29 "/><path fill="#fff" d="M 1002.29 1045.95 C 1003.36 1045.41 1004.43 1044.87 1005.5 1044.32 C 1005.53 1044.31 1005.55 1044.32 1005.57 1044.34 C 1005.78 1044.83 1006.07 1045.66 1006.07 1046.7 C 1006.07 1048.58 1005.12 1049.88 1004.85 1050.24 C 1004.53 1050.68 1003.86 1051.43 1000.61 1052.81 C 997.88 1053.97 996.7 1054.12 993.88 1055.28 C 992.64 1055.78 991.63 1056.25 990.95 1056.59 C 990.9 1056.61 990.86 1056.55 990.89 1056.51 C 991.96 1055.35 992.97 1054.46 993.77 1053.82 C 995.25 1052.63 996.54 1051.87 996.83 1051.7 C 997.32 1051.41 998.3 1050.88 1000.23 1049.82 C 1001.55 1049.1 1002.07 1048.83 1002.35 1048.19 C 1002.7 1047.39 1002.47 1046.53 1002.26 1046.01 C 1002.25 1045.98 1002.26 1045.96 1002.29 1045.95 "/><path fill="#fff" d="M 1002.01 1053.23 C 1002.58 1052.88 1003.15 1052.52 1003.71 1052.16 C 1003.73 1052.16 1003.75 1052.16 1003.77 1052.16 C 1004.44 1052.52 1005.17 1052.95 1005.93 1053.47 C 1007.08 1054.27 1008.02 1055.11 1008.77 1055.86 C 1008.8 1055.89 1008.78 1055.94 1008.73 1055.94 C 1008.03 1055.97 1007.42 1055.93 1006.93 1055.87 C 1005.95 1055.74 1004.48 1055.55 1003.15 1054.51 C 1002.62 1054.1 1002.25 1053.66 1002 1053.3 C 1001.98 1053.28 1001.99 1053.25 1002.01 1053.23 "/><path fill="#fff" d="M 993.77 994.3 C 993.43 994.3 993.16 994.03 993.16 993.7 C 993.16 993.37 993.43 993.1 993.77 993.1 C 994.1 993.1 994.37 993.37 994.37 993.7 C 994.37 994.03 994.1 994.3 993.77 994.3 M 992.48 991.11 C 991.47 990.71 990.39 990.59 989.33 990.49 C 988.08 990.36 986.44 990.46 985.18 990.64 C 983.02 990.96 981.33 991.76 980.3 993.79 C 979.9 994.57 979.68 995.44 979.64 996.32 C 979.5 999.61 981.31 1002.77 983.99 1004.59 C 984.99 1005.27 986.12 1005.79 987.29 1006.12 C 987.3 1006.13 987.32 1006.12 987.33 1006.12 C 987.99 1005.46 988.84 1004.74 989.91 1004.05 C 990.61 1003.59 991.34 1003.2 992.11 1002.85 C 992.47 1002.69 992.83 1002.54 993.21 1002.41 C 993.41 1002.33 993.62 1002.26 993.83 1002.2 C 993.91 1002.17 994.14 1002.09 994.29 1002.03 C 994.36 1002.01 991.61 1001.15 990.22 1000.73 C 988.89 1000.33 987.53 1000.07 986.25 999.49 C 985.71 999.24 985.18 998.95 984.81 998.48 C 984.33 997.89 984.19 996.88 984.72 996.27 C 985.23 995.68 986.19 995.7 986.86 995.96 C 987.36 996.16 987.79 996.47 988.25 996.75 C 989.07 997.25 990.06 997.74 991.08 998.03 C 991.55 998.16 992.04 998.25 992.51 998.29 C 992.54 998.29 992.57 998.25 992.56 998.22 C 992.45 997.91 992.29 997.57 992.05 997.21 C 991.32 996.08 990.42 995.65 990.49 995.54 C 990.57 995.41 991.88 995.79 992.8 996.86 C 993.2 997.32 993.43 997.81 993.57 998.21 C 993.57 998.23 993.6 998.24 993.62 998.24 C 993.74 998.22 993.85 998.19 993.96 998.16 C 994.67 997.99 995.32 997.59 995.73 996.98 C 997.27 994.65 994.48 991.89 992.48 991.11 "/><path fill="#fff" d="M 1005.85 994.3 C 1005.52 994.3 1005.25 994.03 1005.25 993.7 C 1005.25 993.37 1005.52 993.1 1005.85 993.1 C 1006.18 993.1 1006.45 993.37 1006.45 993.7 C 1006.45 994.03 1006.18 994.3 1005.85 994.3 M 1019.45 993.8 C 1018.42 991.76 1016.73 990.97 1014.56 990.64 C 1013.3 990.46 1011.66 990.36 1010.41 990.49 C 1009.35 990.59 1008.27 990.71 1007.27 991.11 C 1005.31 991.87 1002.61 994.52 1003.91 996.81 C 1004.33 997.54 1005.11 998.02 1005.93 998.2 C 1005.95 998.2 1005.96 998.2 1005.97 998.18 C 1006.04 998.02 1006.38 997.28 1006.73 996.86 C 1007.65 995.79 1008.96 995.41 1009.04 995.54 C 1009.11 995.65 1008.21 996.08 1007.48 997.21 C 1007.24 997.57 1007.08 997.93 1006.97 998.23 C 1006.96 998.26 1006.98 998.29 1007.01 998.29 C 1007.56 998.28 1008.11 998.18 1008.66 998.03 C 1009.68 997.74 1010.67 997.25 1011.49 996.75 C 1011.95 996.47 1012.39 996.16 1012.89 995.96 C 1013.55 995.7 1014.51 995.68 1015.02 996.27 C 1015.77 997.12 1015.12 998.46 1014.39 999.07 C 1012.93 1000.3 1010.89 1000.99 1009.05 1001.43 C 1007.85 1001.73 1006.62 1001.91 1005.39 1002.05 C 1004.59 1002.15 1003.79 1002.23 1002.99 1002.31 C 997.27 1002.9 997.27 1002.68 995.83 1002.96 C 994.64 1003.2 991.62 1003.8 989.1 1006.23 C 988.24 1007.05 986.33 1008.89 985.99 1011.88 C 985.92 1012.54 985.67 1015.08 987.38 1017.43 C 988.55 1019.04 990.06 1019.76 990.77 1020.04 C 990.78 1020.05 990.79 1020.04 990.8 1020.04 C 992.78 1018.95 994.75 1017.85 996.73 1016.76 C 996.76 1016.74 996.76 1016.7 996.72 1016.68 C 996.2 1016.43 994.54 1015.54 993.96 1013.68 C 993.83 1013.27 993.45 1012.05 994.05 1010.97 C 994.58 1010 995.61 1009.64 996.32 1009.42 C 998.95 1008.6 1001.04 1008.55 1003.08 1008.37 C 1003.26 1008.35 1003.44 1008.34 1003.62 1008.33 C 1004.36 1008.31 1007.04 1008.07 1012.43 1006.13 C 1014.59 1005.36 1015.32 1004.89 1015.75 1004.59 C 1018.44 1002.76 1020.25 999.6 1020.1 996.3 C 1020.06 995.43 1019.84 994.58 1019.45 993.8 "/></g></svg></div>
+    <div class="h-name">
+      <div class="brand-name">Градусник</div>
+      <div class="brand-sub">Частная скорая помощь &middot; Саратов</div>
+    </div>
+    <div class="h-meta"><b>24/7</b><span>на связи</span></div>
+  </header>
+
   <main>
 
     <!-- ВЫЗОВ -->
     <section class="view active" id="v-main">
-      <div class="apphead">
-        <div class="cross"><svg viewBox="0 0 213 213" aria-hidden="true"><g transform="translate(-893.5,-893.5)"><defs><clipPath id="clip-0"><path clip-rule="nonzero" d="M 893.5 894 L 1106 894 L 1106 1106 L 893.5 1106 Z M 893.5 894 "/></clipPath></defs><g clip-path="url(#clip-0)"><path fill-rule="evenodd" fill="#fff" d="M 1057.34 999.96 L 1105.82 971.31 L 1077.05 921.6 L 1027.42 950.27 L 1027.42 894.08 L 971 894.08 L 971 950.21 L 922.54 921.57 L 893.75 971.31 L 942.23 999.96 L 893.71 1027.52 L 922.54 1077.31 L 971 1048.68 L 971 1105.96 L 1028.57 1105.96 L 1028.57 1048.68 L 1077.03 1077.31 L 1105.85 1027.52 Z M 1057.34 999.96 "/></g><path fill="#0000bb" d="M 975.59 1101.39 L 1023.95 1101.39 L 1023.95 1040.64 L 1075.36 1071.02 L 1099.52 1029.27 L 1048.14 1000.07 L 1099.54 969.7 L 1075.35 927.93 L 1022.8 958.29 L 1022.8 898.72 L 975.59 898.72 L 975.59 958.31 L 924.18 927.94 L 900 969.7 L 951.4 1000.07 L 900.02 1029.27 L 924.18 1071.02 L 975.59 1040.64 Z M 1026.25 1103.69 L 973.29 1103.69 L 973.29 1044.68 L 923.36 1074.18 L 896.86 1028.41 L 946.8 1000.03 L 896.87 970.52 L 923.36 924.77 L 973.29 954.28 L 973.29 896.41 L 1025.1 896.41 L 1025.1 954.3 L 1076.19 924.78 L 1102.67 970.52 L 1052.73 1000.03 L 1102.68 1028.41 L 1076.18 1074.18 L 1026.25 1044.68 Z M 1026.25 1103.69 "/><path fill="#0000bb" d="M 995.89 973.73 C 995.82 978.25 995.75 982.78 995.68 987.31 C 995.68 987.41 995.62 987.51 995.52 987.55 C 994.44 988 993.51 988.3 992.82 988.49 C 990.87 989.05 989.8 989.34 988.56 989 C 987.68 988.76 987.03 988.29 986.62 987.93 C 986.56 987.88 986.48 987.87 986.42 987.91 C 985.96 988.2 985.2 988.59 984.21 988.72 C 983.58 988.81 981.94 989.04 980.6 987.94 C 979.35 986.91 979.17 985.38 979.16 984.68 C 979.15 984.54 978.99 984.47 978.89 984.55 C 978.11 985.18 976.99 985.85 975.55 986.18 C 974.87 986.33 971.91 986.99 970.09 985.3 C 969.21 984.48 968.86 983.36 968.84 983.3 C 968.68 982.8 968.64 982.35 968.64 982.01 C 968.64 981.88 968.52 981.8 968.41 981.86 C 967.78 982.16 966.29 982.72 964.53 982.24 C 963.95 982.08 962.64 981.74 961.8 980.48 C 961.15 979.5 961.11 978.48 961.13 977.96 C 961.14 977.86 961.04 977.77 960.94 977.79 C 960.04 977.96 958.81 978.12 957.35 978.07 C 956.14 978.03 953.95 977.93 951.56 976.73 C 949.39 975.64 947.98 974.11 947.13 972.96 C 946.9 972.64 947.13 972.2 947.52 972.21 C 947.78 972.21 947.95 972.21 948.04 972.21 C 948.66 972.22 949.28 972.23 949.9 972.23 C 951.23 972.25 952.56 972.26 953.89 972.27 C 956.52 972.27 959.15 972.24 961.79 972.29 C 964.4 972.34 967.01 972.41 969.63 972.27 C 971.97 972.15 974.3 971.88 976.59 971.36 C 980.04 970.57 983.33 969.18 986.8 968.49 C 987.93 968.26 989.12 968.13 990.15 968.76 C 991.4 969.52 991.81 970.85 992.36 972.12 C 992.53 972.53 992.74 972.95 993.09 973.21 C 993.54 973.55 994.11 973.59 994.65 973.59 C 994.75 973.59 995.39 973.59 995.71 973.56 C 995.81 973.55 995.89 973.63 995.89 973.73 "/><path fill="#0000bb" d="M 1003.59 973.73 C 1003.66 978.25 1003.73 982.78 1003.79 987.31 C 1003.79 987.41 1003.86 987.51 1003.96 987.55 C 1005.04 988 1005.97 988.3 1006.66 988.49 C 1008.61 989.05 1009.68 989.34 1010.91 989 C 1011.8 988.76 1012.45 988.29 1012.86 987.93 C 1012.91 987.88 1013 987.87 1013.06 987.91 C 1013.52 988.2 1014.27 988.59 1015.27 988.72 C 1015.9 988.81 1017.54 989.04 1018.88 987.94 C 1020.13 986.91 1020.31 985.38 1020.32 984.68 C 1020.33 984.54 1020.48 984.47 1020.59 984.55 C 1021.37 985.18 1022.48 985.85 1023.93 986.18 C 1024.61 986.33 1027.57 986.99 1029.39 985.3 C 1030.27 984.48 1030.62 983.36 1030.64 983.3 C 1030.79 982.8 1030.84 982.35 1030.84 982.01 C 1030.84 981.88 1030.96 981.8 1031.07 981.86 C 1031.7 982.16 1033.19 982.72 1034.95 982.24 C 1035.53 982.08 1036.84 981.74 1037.68 980.48 C 1038.33 979.5 1038.37 978.48 1038.34 977.96 C 1038.34 977.86 1038.43 977.77 1038.54 977.79 C 1039.44 977.96 1040.67 978.12 1042.12 978.07 C 1043.34 978.03 1045.53 977.93 1047.91 976.73 C 1050.08 975.64 1051.5 974.11 1052.34 972.96 C 1052.57 972.64 1052.35 972.2 1051.96 972.21 C 1051.7 972.21 1051.53 972.21 1051.44 972.21 C 1050.82 972.22 1050.2 972.23 1049.58 972.23 C 1048.25 972.25 1046.92 972.26 1045.59 972.27 C 1042.96 972.27 1040.32 972.24 1037.7 972.29 C 1035.08 972.34 1032.46 972.41 1029.85 972.27 C 1027.51 972.15 1025.18 971.88 1022.89 971.36 C 1019.44 970.57 1016.14 969.18 1012.68 968.49 C 1011.55 968.26 1010.36 968.13 1009.32 968.76 C 1008.08 969.52 1007.66 970.85 1007.12 972.12 C 1006.95 972.53 1006.74 972.95 1006.38 973.21 C 1005.94 973.55 1005.37 973.59 1004.83 973.59 C 1004.73 973.59 1004.09 973.59 1003.77 973.56 C 1003.67 973.55 1003.59 973.63 1003.59 973.73 "/><path fill="#0000bb" d="M 1005 967.65 C 1005 964.56 1002.32 962.1 999.16 962.46 C 996.88 962.71 994.99 964.49 994.61 966.75 C 994.22 969.07 995.36 971.16 997.18 972.2 C 997.2 972.21 997.2 972.22 997.2 972.24 C 997.17 986.62 997.11 1068.17 999.95 1068.17 C 1002.8 1068.17 1002.48 986.36 1002.4 972.2 C 1002.4 972.19 1002.41 972.17 1002.42 972.16 C 1003.96 971.25 1005 969.57 1005 967.65 "/><path fill="#0000bb" d="M 1004.07 1009.83 C 1006.57 1009.27 1009.09 1008.71 1011.6 1008.16 C 1011.61 1008.15 1011.63 1008.16 1011.64 1008.17 C 1011.98 1008.56 1012.44 1009.17 1012.8 1010 C 1012.91 1010.25 1014.09 1013.05 1012.85 1015.74 C 1012.18 1017.19 1011.14 1017.91 1009.47 1019.03 C 1008.71 1019.54 1006.01 1021.28 1001.34 1022.59 C 998.65 1023.36 997.36 1023.39 996.16 1024.73 C 995.8 1025.12 994.73 1026.3 994.98 1027.88 C 995.22 1029.44 996.59 1030.27 996.96 1030.48 C 997 1030.49 996.99 1030.54 996.96 1030.55 C 995.45 1031.42 993.94 1032.28 992.43 1033.14 C 992.41 1033.15 992.4 1033.15 992.39 1033.15 C 991.77 1032.94 990.01 1032.26 988.91 1030.45 C 987.25 1027.69 988.55 1024.68 988.84 1024.05 C 989.81 1021.98 991.51 1020.97 992.94 1020.12 C 994.72 1019.06 996.5 1018.54 998.73 1017.89 C 1000.74 1017.31 1001.55 1017.25 1002.87 1016.44 C 1003.81 1015.86 1005.04 1015.08 1005.46 1013.61 C 1005.57 1013.26 1005.96 1011.67 1005 1010.58 C 1004.7 1010.23 1004.34 1010.03 1004.06 1009.92 C 1004.02 1009.9 1004.02 1009.84 1004.07 1009.83 "/><path fill="#0000bb" d="M 1002.83 1023.51 C 1004.41 1022.87 1005.99 1022.23 1007.57 1021.6 C 1007.59 1021.59 1007.6 1021.59 1007.61 1021.6 C 1008.1 1021.86 1008.86 1022.35 1009.5 1023.22 C 1010.48 1024.55 1010.57 1025.93 1010.62 1026.76 C 1010.65 1027.41 1010.76 1029.52 1009.43 1031.38 C 1008.29 1032.99 1006.64 1033.59 1004.5 1034.37 C 1003.42 1034.76 1002.73 1034.89 999.54 1035.96 C 998.84 1036.2 997.74 1036.59 996.93 1037.6 C 996.64 1037.96 996.18 1038.56 996.27 1039.34 C 996.35 1039.96 996.75 1040.39 996.96 1040.58 C 996.98 1040.6 996.98 1040.64 996.95 1040.65 C 996.21 1041.11 995.46 1041.56 994.71 1042.01 C 994.09 1042.38 993.48 1042.75 992.86 1043.11 C 992.84 1043.11 992.83 1043.11 992.81 1043.1 C 992.3 1042.72 991.25 1041.82 990.82 1040.34 C 990.03 1037.65 991.94 1035.29 992.38 1034.75 C 993.72 1033.11 995.44 1032.43 996.27 1032.11 C 998.53 1031.25 999.44 1031.83 1001.48 1030.69 C 1002.32 1030.22 1003.27 1029.67 1003.78 1028.54 C 1004.45 1027.01 1003.86 1025.45 1003.74 1025.13 C 1003.47 1024.42 1003.09 1023.9 1002.81 1023.58 C 1002.79 1023.55 1002.8 1023.52 1002.83 1023.51 "/><path fill="#0000bb" d="M 1002.59 1036.29 C 1003.94 1035.78 1005.3 1035.27 1006.66 1034.77 C 1006.68 1034.76 1006.7 1034.76 1006.71 1034.78 C 1007.02 1035.28 1007.45 1036.11 1007.63 1037.22 C 1007.71 1037.69 1007.99 1039.64 1006.9 1041.38 C 1006.13 1042.61 1005.06 1043.14 1003.01 1044.16 C 1000.88 1045.22 999.47 1045.73 999.47 1045.73 C 998.16 1046.2 997.34 1046.38 997.07 1047.08 C 996.93 1047.46 997.02 1047.96 997.21 1048.95 C 997.43 1050.09 997.61 1050.32 997.45 1050.55 C 997.1 1051.07 995.59 1050.89 994.54 1050.24 C 993.43 1049.55 992.52 1048.16 992.62 1046.7 C 992.77 1044.62 994.87 1043.39 995.75 1042.88 C 996.32 1042.54 997.55 1042.1 999.99 1041.21 C 1000.99 1040.85 1001.81 1040.57 1002.45 1039.75 C 1002.68 1039.46 1003.19 1038.8 1003.15 1037.88 C 1003.12 1037.13 1002.75 1036.6 1002.56 1036.36 C 1002.54 1036.34 1002.55 1036.3 1002.59 1036.29 "/><path fill="#0000bb" d="M 1002.29 1045.95 C 1003.36 1045.41 1004.43 1044.87 1005.5 1044.32 C 1005.53 1044.31 1005.55 1044.32 1005.57 1044.34 C 1005.78 1044.83 1006.07 1045.66 1006.07 1046.7 C 1006.07 1048.58 1005.12 1049.88 1004.85 1050.24 C 1004.53 1050.68 1003.86 1051.43 1000.61 1052.81 C 997.88 1053.97 996.7 1054.12 993.88 1055.28 C 992.64 1055.78 991.63 1056.25 990.95 1056.59 C 990.9 1056.61 990.86 1056.55 990.89 1056.51 C 991.96 1055.35 992.97 1054.46 993.77 1053.82 C 995.25 1052.63 996.54 1051.87 996.83 1051.7 C 997.32 1051.41 998.3 1050.88 1000.23 1049.82 C 1001.55 1049.1 1002.07 1048.83 1002.35 1048.19 C 1002.7 1047.39 1002.47 1046.53 1002.26 1046.01 C 1002.25 1045.98 1002.26 1045.96 1002.29 1045.95 "/><path fill="#0000bb" d="M 1002.01 1053.23 C 1002.58 1052.88 1003.15 1052.52 1003.71 1052.16 C 1003.73 1052.16 1003.75 1052.16 1003.77 1052.16 C 1004.44 1052.52 1005.17 1052.95 1005.93 1053.47 C 1007.08 1054.27 1008.02 1055.11 1008.77 1055.86 C 1008.8 1055.89 1008.78 1055.94 1008.73 1055.94 C 1008.03 1055.97 1007.42 1055.93 1006.93 1055.87 C 1005.95 1055.74 1004.48 1055.55 1003.15 1054.51 C 1002.62 1054.1 1002.25 1053.66 1002 1053.3 C 1001.98 1053.28 1001.99 1053.25 1002.01 1053.23 "/><path fill="#0000bb" d="M 993.77 994.3 C 993.43 994.3 993.16 994.03 993.16 993.7 C 993.16 993.37 993.43 993.1 993.77 993.1 C 994.1 993.1 994.37 993.37 994.37 993.7 C 994.37 994.03 994.1 994.3 993.77 994.3 M 992.48 991.11 C 991.47 990.71 990.39 990.59 989.33 990.49 C 988.08 990.36 986.44 990.46 985.18 990.64 C 983.02 990.96 981.33 991.76 980.3 993.79 C 979.9 994.57 979.68 995.44 979.64 996.32 C 979.5 999.61 981.31 1002.77 983.99 1004.59 C 984.99 1005.27 986.12 1005.79 987.29 1006.12 C 987.3 1006.13 987.32 1006.12 987.33 1006.12 C 987.99 1005.46 988.84 1004.74 989.91 1004.05 C 990.61 1003.59 991.34 1003.2 992.11 1002.85 C 992.47 1002.69 992.83 1002.54 993.21 1002.41 C 993.41 1002.33 993.62 1002.26 993.83 1002.2 C 993.91 1002.17 994.14 1002.09 994.29 1002.03 C 994.36 1002.01 991.61 1001.15 990.22 1000.73 C 988.89 1000.33 987.53 1000.07 986.25 999.49 C 985.71 999.24 985.18 998.95 984.81 998.48 C 984.33 997.89 984.19 996.88 984.72 996.27 C 985.23 995.68 986.19 995.7 986.86 995.96 C 987.36 996.16 987.79 996.47 988.25 996.75 C 989.07 997.25 990.06 997.74 991.08 998.03 C 991.55 998.16 992.04 998.25 992.51 998.29 C 992.54 998.29 992.57 998.25 992.56 998.22 C 992.45 997.91 992.29 997.57 992.05 997.21 C 991.32 996.08 990.42 995.65 990.49 995.54 C 990.57 995.41 991.88 995.79 992.8 996.86 C 993.2 997.32 993.43 997.81 993.57 998.21 C 993.57 998.23 993.6 998.24 993.62 998.24 C 993.74 998.22 993.85 998.19 993.96 998.16 C 994.67 997.99 995.32 997.59 995.73 996.98 C 997.27 994.65 994.48 991.89 992.48 991.11 "/><path fill="#0000bb" d="M 1005.85 994.3 C 1005.52 994.3 1005.25 994.03 1005.25 993.7 C 1005.25 993.37 1005.52 993.1 1005.85 993.1 C 1006.18 993.1 1006.45 993.37 1006.45 993.7 C 1006.45 994.03 1006.18 994.3 1005.85 994.3 M 1019.45 993.8 C 1018.42 991.76 1016.73 990.97 1014.56 990.64 C 1013.3 990.46 1011.66 990.36 1010.41 990.49 C 1009.35 990.59 1008.27 990.71 1007.27 991.11 C 1005.31 991.87 1002.61 994.52 1003.91 996.81 C 1004.33 997.54 1005.11 998.02 1005.93 998.2 C 1005.95 998.2 1005.96 998.2 1005.97 998.18 C 1006.04 998.02 1006.38 997.28 1006.73 996.86 C 1007.65 995.79 1008.96 995.41 1009.04 995.54 C 1009.11 995.65 1008.21 996.08 1007.48 997.21 C 1007.24 997.57 1007.08 997.93 1006.97 998.23 C 1006.96 998.26 1006.98 998.29 1007.01 998.29 C 1007.56 998.28 1008.11 998.18 1008.66 998.03 C 1009.68 997.74 1010.67 997.25 1011.49 996.75 C 1011.95 996.47 1012.39 996.16 1012.89 995.96 C 1013.55 995.7 1014.51 995.68 1015.02 996.27 C 1015.77 997.12 1015.12 998.46 1014.39 999.07 C 1012.93 1000.3 1010.89 1000.99 1009.05 1001.43 C 1007.85 1001.73 1006.62 1001.91 1005.39 1002.05 C 1004.59 1002.15 1003.79 1002.23 1002.99 1002.31 C 997.27 1002.9 997.27 1002.68 995.83 1002.96 C 994.64 1003.2 991.62 1003.8 989.1 1006.23 C 988.24 1007.05 986.33 1008.89 985.99 1011.88 C 985.92 1012.54 985.67 1015.08 987.38 1017.43 C 988.55 1019.04 990.06 1019.76 990.77 1020.04 C 990.78 1020.05 990.79 1020.04 990.8 1020.04 C 992.78 1018.95 994.75 1017.85 996.73 1016.76 C 996.76 1016.74 996.76 1016.7 996.72 1016.68 C 996.2 1016.43 994.54 1015.54 993.96 1013.68 C 993.83 1013.27 993.45 1012.05 994.05 1010.97 C 994.58 1010 995.61 1009.64 996.32 1009.42 C 998.95 1008.6 1001.04 1008.55 1003.08 1008.37 C 1003.26 1008.35 1003.44 1008.34 1003.62 1008.33 C 1004.36 1008.31 1007.04 1008.07 1012.43 1006.13 C 1014.59 1005.36 1015.32 1004.89 1015.75 1004.59 C 1018.44 1002.76 1020.25 999.6 1020.1 996.3 C 1020.06 995.43 1019.84 994.58 1019.45 993.8 "/></g></svg></div>
-        <div><div class="t1">ГРАДУСНИК</div><div class="t2">ЧАСТНАЯ СКОРАЯ ПОМОЩЬ · САРАТОВ</div></div>
+      <div class="sec-lb"><i>01</i>Экстренный вызов</div>
+      <div class="sos-zone">
+        <i class="sos-o o2"></i><i class="sos-o o1"></i>
+        <button class="sos" type="button" onclick="callAmbulance('Вызов скорой')" aria-label="Вызвать скорую — звонок">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <b>Вызвать<br>скорую</b>
+          <span>Одно нажатие — звонок</span>
+        </button>
       </div>
-      <div class="sos-wrap">
-        <button class="sos" onclick="callAmbulance('Вызов скорой')">ВЫЗВАТЬ<br>СКОРУЮ<small>одно нажатие — звонок</small></button>
-        <div class="sos-cap">Круглосуточно · Анонимно<br>8 (8452) 988-111 · 8 (9675) 008-111</div>
-      </div>
-      <div class="addr">
-        <div class="pin">📍</div>
-        <div><div class="a1">Адрес выезда</div><div class="a2" id="addr-text">не указан — добавьте заранее</div></div>
-        <button class="chg" onclick="editAddress()">Изменить</button>
-      </div>
-      <div class="msgs">
-        <a class="wa" href="https://wa.me/79675008111?text=Здравствуйте!%20Нужна%20помощь." target="_blank" rel="noopener">🟢 WhatsApp</a>
-        <a class="tg" href="https://t.me/+79675008111" target="_blank" rel="noopener">✈️ Telegram</a>
-      </div>
+      <div class="sos-hint"><span>Диспетчер на связи</span><span><i>&#9679;</i> Отвечаем круглосуточно</span></div>
+
+      <section class="phone-block">
+        <div class="sec-lb"><i>02</i>Телефоны</div>
+        <a class="phone-main" href="tel:+78452988111" onclick="logCall('Звонок — городской')">8 (8452) 988-111</a>
+        <div class="phone-row2">
+          <a class="phone-alt" href="tel:+79675008111" onclick="logCall('Звонок — мобильный')">8 (9675) 008-111</a>
+          <div class="badges">Круглосуточно<i>/</i>Анонимно</div>
+        </div>
+      </section>
+
+      <figure class="figure">
+        <div class="fig-img" role="img" aria-label="Врачебная бригада скорой помощи на выезде"></div>
+        <figcaption class="fig-cap"><span>Врачебная бригада &middot; Саратов</span><span><i>gradusnikmed.ru</i></span></figcaption>
+      </figure>
+
+      <section>
+        <div class="sec-lb later"><i>03</i>Выезд</div>
+        <div class="addr">
+          <div class="addr-tx">
+            <div class="addr-lb">Адрес выезда</div>
+            <div class="addr-vl" id="addr-text">не указан &mdash; добавьте заранее</div>
+          </div>
+          <button class="addr-btn" type="button" onclick="editAddress()">Изменить</button>
+        </div>
+        <div class="msgr">
+          <a href="https://wa.me/79675008111?text=Здравствуйте!%20Нужна%20помощь." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>WhatsApp</a>
+          <a href="https://t.me/+79675008111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>Telegram</a>
+        </div>
+        <div class="trust">Лицензированная медицинская служба &middot; Саратов</div>
+      </section>
     </section>
 
     <!-- УСЛУГИ -->
     <section class="view" id="v-services">
-      <h3 class="sec">Выезд на дом</h3>
-      <div class="item tap" onclick="callAmbulance('Детокс-капельница')"><div class="ic">💧</div>
-        <div><div class="nm">Детокс-капельница <span class="tag">анонимно</span></div>
-        <div class="ds">Снятие интоксикации и похмельного синдрома</div></div><div class="go">›</div></div>
-      <div class="item tap" onclick="callAmbulance('Вызов врача')"><div class="ic">🌡️</div>
-        <div><div class="nm">Температура, ОРВИ, грипп</div>
-        <div class="ds">Осмотр врача, инъекции, назначения</div></div><div class="go">›</div></div>
-      <div class="item tap" onclick="callAmbulance('Давление/ЭКГ')"><div class="ic">❤️</div>
-        <div><div class="nm">Давление и ЭКГ на дому</div>
-        <div class="ds">Диагностика и стабилизация состояния</div></div><div class="go">›</div></div>
-      <div class="item tap" onclick="callAmbulance('Перевозка')"><div class="ic">🚑</div>
-        <div><div class="nm">Перевозка пациентов</div>
-        <div class="ds">В лечебные учреждения города, с сопровождением</div></div><div class="go">›</div></div>
-      <h3 class="sec">Амбулаторно, ул. Большая Садовая, 54</h3>
-      <div class="item"><div class="ic">🧠</div>
-        <div><div class="nm">Приём психиатра</div><div class="ds">По записи, конфиденциально</div></div></div>
-      <div class="item"><div class="ic">🩺</div>
-        <div><div class="nm">Приём терапевта</div><div class="ds">Осмотр, назначения, справки</div></div></div>
+      <div class="sec-lb"><i>01</i>Выезд на дом</div>
+      <div class="rows">
+        <button class="row" type="button" onclick="callAmbulance('Детокс-капельница')">
+          <div class="row-tx"><div class="nm">Детокс-капельница <span class="tag">анонимно</span></div>
+          <div class="ds">Снятие интоксикации и похмельного синдрома</div></div>
+          <span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <button class="row" type="button" onclick="callAmbulance('Вызов врача')">
+          <div class="row-tx"><div class="nm">Температура, ОРВИ, грипп</div>
+          <div class="ds">Осмотр врача, инъекции, назначения</div></div>
+          <span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <button class="row" type="button" onclick="callAmbulance('Давление/ЭКГ')">
+          <div class="row-tx"><div class="nm">Давление и ЭКГ на дому</div>
+          <div class="ds">Диагностика и стабилизация состояния</div></div>
+          <span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <button class="row" type="button" onclick="callAmbulance('Перевозка')">
+          <div class="row-tx"><div class="nm">Перевозка пациентов</div>
+          <div class="ds">В лечебные учреждения города, с сопровождением</div></div>
+          <span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+      </div>
+      <div class="sec-lb later"><i>02</i>Амбулаторно &middot; Большая Садовая, 54</div>
+      <div class="rows">
+        <div class="row">
+          <div class="row-tx"><div class="nm">Приём психиатра</div>
+          <div class="ds">По записи, конфиденциально</div></div>
+        </div>
+        <div class="row">
+          <div class="row-tx"><div class="nm">Приём терапевта</div>
+          <div class="ds">Осмотр, назначения, справки</div></div>
+        </div>
+      </div>
+      <div class="trust">Звонок и выезд &middot; круглосуточно</div>
     </section>
 
     <!-- СТАЦИОНАР -->
     <section class="view" id="v-stac">
-      <h3 class="sec">Собственный стационар</h3>
-      <div class="hero">
-        <h4>Разместим пациента под наблюдением 24/7</h4>
+      <div class="sec-lb"><i>01</i>Собственный стационар</div>
+      <div class="stac-hero">
+        <h2>Разместим пациента под наблюдением 24/7</h2>
         <p>Свой стационар в Саратове: детоксикация, восстановительная терапия,
         круглосуточное наблюдение врача и медсестёр. Анонимно, без постановки на учёт.</p>
-        <a class="cta" href="tel:+78452988111" onclick="logCall('Стационар')">Узнать о размещении</a>
+        <a class="stac-cta" href="tel:+78452988111" onclick="logCall('Стационар')">Узнать о размещении</a>
       </div>
-      <div class="item" style="margin-top:12px"><div class="ic">🛏️</div>
-        <div><div class="nm">Комфортные палаты</div><div class="ds">Питание и уход включены</div></div></div>
-      <div class="item"><div class="ic">👨‍⚕️</div>
-        <div><div class="nm">Врач всегда рядом</div><div class="ds">Контроль состояния круглосуточно</div></div></div>
-      <div class="item"><div class="ic">🚑</div>
-        <div><div class="nm">Доставка в стационар</div><div class="ds">Бригада привезёт из дома в клинику</div></div></div>
+      <div class="sec-lb later"><i>02</i>Условия</div>
+      <div class="rows">
+        <div class="row">
+          <div class="row-tx"><div class="nm">Комфортные палаты</div>
+          <div class="ds">Питание и уход включены</div></div>
+        </div>
+        <div class="row">
+          <div class="row-tx"><div class="nm">Врач всегда рядом</div>
+          <div class="ds">Контроль состояния круглосуточно</div></div>
+        </div>
+        <div class="row">
+          <div class="row-tx"><div class="nm">Доставка в стационар</div>
+          <div class="ds">Бригада привезёт из дома в клинику</div></div>
+        </div>
+      </div>
+      <div class="trust">Анонимно &middot; Без постановки на учёт</div>
     </section>
 
     <!-- ПРОФИЛЬ -->
     <section class="view" id="v-hist">
-      <h3 class="sec">Мои вызовы</h3>
-      <div id="hist-list"></div>
-      <h3 class="sec">Контакты</h3>
-      <div class="item tap" onclick="callAmbulance('Звонок из контактов')"><div class="ic">📞</div>
-        <div><div class="nm">8 (8452) 988-111</div><div class="ds">Круглосуточный вызов</div></div></div>
-      <div class="item tap" onclick="callNumber('+79675008111','Звонок из контактов')"><div class="ic">📱</div>
-        <div><div class="nm">8 (9675) 008-111</div><div class="ds">Мобильный, WhatsApp, Telegram</div></div></div>
-      <div class="item"><div class="ic">📍</div>
-        <div><div class="nm">ул. Большая Садовая, 54</div><div class="ds">РНЛ: Л041-01020-64/00742789 · gradusnikmed.ru</div></div></div>
+      <div class="sec-lb"><i>01</i>Мои вызовы</div>
+      <div class="rows" id="hist-list"></div>
+      <div class="sec-lb later"><i>02</i>Контакты</div>
+      <div class="rows">
+        <button class="row" type="button" onclick="callAmbulance('Звонок из контактов')">
+          <div class="row-tx"><div class="nm">8 (8452) 988-111</div>
+          <div class="ds">Круглосуточный вызов</div></div>
+          <span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <button class="row" type="button" onclick="callNumber('+79675008111','Звонок из контактов')">
+          <div class="row-tx"><div class="nm">8 (9675) 008-111</div>
+          <div class="ds">Мобильный, WhatsApp, Telegram</div></div>
+          <span class="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <div class="row">
+          <div class="row-tx"><div class="nm">ул. Большая Садовая, 54</div>
+          <div class="ds">gradusnikmed.ru</div></div>
+        </div>
+      </div>
+      <div class="trust wrap">РНЛ: Л041-01020-64/00742789</div>
     </section>
 
   </main>
 
   <nav aria-label="Разделы">
-    <button class="on" data-v="v-main"><span class="i">🚨</span>Вызов</button>
-    <button data-v="v-services"><span class="i">🩺</span>Услуги</button>
-    <button data-v="v-stac"><span class="i">🛏️</span>Стационар</button>
-    <button data-v="v-hist"><span class="i">👤</span>Профиль</button>
+    <button class="on" data-v="v-main"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Вызов</button>
+    <button data-v="v-services"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Услуги</button>
+    <button data-v="v-stac"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>Стационар</button>
+    <button data-v="v-hist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Профиль</button>
   </nav>
 
 <script>
@@ -234,8 +365,8 @@
       return;
     }
     box.innerHTML = h.map(x =>
-      '<div class="item"><div class="ic">📞</div><div><div class="nm">'+x.kind+
-      '</div><div class="ds">'+x.at+'</div></div><button class="redial" onclick="callAmbulance(\''+x.kind.replace(/'/g,'')+'\')">Повторить</button></div>'
+      '<div class="row"><div class="row-tx"><div class="nm">'+x.kind+
+      '</div><div class="ds">'+x.at+'</div></div><button class="redial" type="button" onclick="callAmbulance(\''+x.kind.replace(/'/g,'')+'\')">Повторить</button></div>'
     ).join('');
   }
 

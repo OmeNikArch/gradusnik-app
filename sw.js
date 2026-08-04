@@ -1,5 +1,5 @@
 // Офлайн-кэш: приложение открывается без интернета
-const CACHE = 'gradusnik-v2';
+const CACHE = 'gradusnik-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,11 @@ const ASSETS = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-512-maskable.png',
-  './icons/apple-touch-icon.png'
+  './icons/apple-touch-icon.png',
+  './fonts/inter-cyr.woff2',
+  './fonts/inter-lat.woff2',
+  './fonts/intertight-cyr.woff2',
+  './fonts/intertight-lat.woff2'
 ];
 
 self.addEventListener('install', e => {
