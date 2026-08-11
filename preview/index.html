@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>«Градусник» – 3 варианта сайта на выбор</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--brand:#0000BB;--ink:#0F2A6B;--muted:#475569;--red:#D92D20;--line:#D9E2F2}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.6;
+  background:linear-gradient(160deg,#F2F4FF,#E4EAFE 60%,#EDF0FF);min-height:100vh;padding:48px 20px 64px}
+.wrap{max-width:1180px;margin:0 auto}
+header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+header img{width:52px;height:52px}
+h1{font-family:'Inter Tight',sans-serif;font-weight:800;font-size:clamp(24px,3.6vw,36px);letter-spacing:-.01em}
+.sub{color:var(--muted);max-width:720px;margin:10px 0 40px;font-size:16.5px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.95);border-radius:22px;overflow:hidden;
+  box-shadow:0 20px 50px rgba(15,42,107,.12);display:flex;flex-direction:column;backdrop-filter:blur(12px)}
+.card .shot{display:block;border-bottom:1px solid var(--line);overflow:hidden}
+.card .shot img{width:100%;display:block;transition:transform .25s}
+.card:hover .shot img{transform:scale(1.03)}
+.card .body{padding:22px 24px 26px;display:flex;flex-direction:column;flex:1}
+.num{font:700 11.5px/1 'Inter';letter-spacing:.18em;text-transform:uppercase;color:var(--brand);margin-bottom:8px}
+.card h2{font-family:'Inter Tight',sans-serif;font-weight:800;font-size:20px;margin-bottom:8px}
+.card p{color:var(--muted);font-size:14px;flex:1}
+.card .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;
+  background:var(--brand);color:#fff;font:700 15px/1 'Inter';padding:14px 22px;border-radius:12px;text-decoration:none;transition:background .15s}
+.card .btn:hover{background:#000099}
+.note{margin-top:36px;color:var(--muted);font-size:13.5px;text-align:center}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="assets/logo-icon.svg" alt="Логотип «Градусник»">
+    <h1>«Градусник» – три варианта сайта</h1>
+  </header>
+  <p class="sub">Все три собраны на маркетинговом исследовании рынка Саратова: цены-якоря, отзывы, лицензия с выпиской из реестра, кнопки звонка на каждом экране. Открывайте с телефона – именно так сайт увидит большинство пациентов.</p>
+  <div class="grid">
+    <div class="card">
+      <a class="shot" href="variant-3-glass-air.html"><img src="assets/preview-variant-3-glass-air.jpg" alt="Превью варианта «Фирменный Glass Air»"></a>
+      <div class="body">
+        <span class="num">Вариант 1 · рекомендуем</span>
+        <h2>Фирменный «Glass Air»</h2>
+        <p>В утверждённом стиле визитки и приложения: логотип, синий #0000BB, стеклянные карточки, красная кнопка вызова как в приложении, стационар и QR установки.</p>
+        <a class="btn" href="variant-3-glass-air.html">Открыть макет</a>
+      </div>
+    </div>
+    <div class="card">
+      <a class="shot" href="variant-1-code-red.html"><img src="assets/preview-variant-1-code-red.jpg" alt="Превью варианта «Красный код»"></a>
+      <div class="body">
+        <span class="num">Вариант 2</span>
+        <h2>«Красный код»</h2>
+        <p>Экстренная подача: счётчик «10 минут», ЭКГ-линия, максимальный акцент на срочный звонок. Под рекламу по запросам «скорая помощь срочно».</p>
+        <a class="btn" href="variant-1-code-red.html">Открыть макет</a>
+      </div>
+    </div>
+    <div class="card">
+      <a class="shot" href="variant-2-care.html"><img src="assets/preview-variant-2-care.jpg" alt="Превью варианта «Забота»"></a>
+      <div class="body">
+        <span class="num">Вариант 3</span>
+        <h2>«Забота»</h2>
+        <p>Мягкая, доверительная подача для родственников: анонимность, путь помощи из 4 шагов, врачи и отзывы. Под запросы «вывод из запоя на дому».</p>
+        <a class="btn" href="variant-2-care.html">Открыть макет</a>
+      </div>
+    </div>
+  </div>
+  <p class="note">Черновые макеты для согласования · тексты, цены и фото уточняются · «Градусник», Саратов · 2026</p>
+</div>
+</body>
+</html>

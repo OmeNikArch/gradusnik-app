@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>«Градусник» – помощь при запое и вызов врача на дом в Саратове – анонимно, 24/7</title>
+<meta name="description" content="Частная скорая помощь «Градусник»: вывод из запоя на дому, капельницы, врач на дом в Саратове и Энгельсе. Анонимно, без постановки на учёт. Бесплатная консультация: 8 (967) 500-81-11">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBFAF7; --ink:#17332F; --muted:#5B6E68; --teal:#0F766E; --teal-deep:#0A544E;
+  --sage:#E9F2ED; --card:#FFFFFF; --line:#E0E8E2; --coral:#E8674B; --coral-deep:#D05335;
+  --display:'Rubik',system-ui,sans-serif; --body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --r:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px}
+a{color:inherit;text-decoration:none}
+svg{display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--display);line-height:1.18;letter-spacing:-.01em}
+h2{font-size:clamp(26px,3.6vw,36px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font:600 13px/1 var(--body);color:var(--teal);margin-bottom:14px}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--teal);border-radius:2px}
+.section{padding:76px 0}
+.sub{color:var(--muted);max-width:620px;margin-top:12px}
+.center{text-align:center}
+.center .sub{margin-left:auto;margin-right:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:600 16px/1 var(--body);
+  padding:16px 28px;border-radius:99px;cursor:pointer;border:2px solid transparent;transition:all .18s}
+.btn:active{transform:scale(.97)}
+.btn-coral{background:var(--coral);color:#fff;box-shadow:0 10px 26px rgba(232,103,75,.32)}
+.btn-coral:hover{background:var(--coral-deep)}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal-deep)}
+.btn-line{border-color:var(--teal);color:var(--teal)}
+.btn-line:hover{background:var(--teal);color:#fff}
+/* header */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(251,250,247,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:24px;height:70px}
+.logo{display:flex;align-items:center;gap:11px;font:700 19px/1.05 var(--display)}
+.logo-mark{width:40px;height:40px;border-radius:14px;background:var(--teal);color:#fff;display:grid;place-items:center;flex:none}
+.logo small{display:block;font:500 11px/1.3 var(--body);color:var(--muted)}
+.nav{display:flex;gap:20px;margin-left:auto;font:500 14px/1 var(--body);color:var(--muted)}
+.nav a:hover{color:var(--teal)}
+.top-phone{text-align:right;font:700 16px/1.15 var(--body);white-space:nowrap}
+.top-phone small{display:block;font:500 11px/1.3 var(--body);color:var(--teal)}
+.btn-top{padding:12px 20px;font-size:14px}
+/* hero */
+.hero{position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-180px;top:-140px;width:560px;height:560px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#DFF0E8,#CDE6DA 60%,transparent 72%);opacity:.9}
+.hero::after{content:"";position:absolute;right:180px;bottom:-90px;width:230px;height:230px;border-radius:50%;background:#F6E4DC;opacity:.6}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center;padding-top:72px;padding-bottom:84px}
+.hero h1{font-size:clamp(32px,4.8vw,50px);font-weight:700}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero p.lead{margin:18px 0 28px;color:var(--muted);font-size:18px;max-width:500px}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.hero-note{margin-top:16px;font-size:13.5px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.hero-note svg{color:var(--teal);flex:none}
+/* hero card – "рядом уже через 10 минут" */
+.promise{position:relative;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:32px 30px;
+  box-shadow:0 30px 60px rgba(23,51,47,.10)}
+.promise-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.promise-head .dot{width:52px;height:52px;border-radius:18px;background:var(--sage);display:grid;place-items:center;color:var(--teal);flex:none}
+.promise-head b{font:600 17px/1.3 var(--display)}
+.promise-head small{display:block;font:500 13px/1.4 var(--body);color:var(--muted)}
+.promise ul{list-style:none;display:grid;gap:14px;margin-bottom:24px}
+.promise li{display:flex;gap:11px;font-size:14.5px;color:var(--ink)}
+.promise li svg{color:var(--teal);flex:none;margin-top:3px}
+.promise .btn{width:100%}
+.promise .anon{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
+/* trust strip */
+.trust{background:var(--teal);color:#fff;padding:20px 0}
+.trust .wrap{display:flex;flex-wrap:wrap;gap:10px 44px;justify-content:center;font:500 14.5px/1 var(--body)}
+.trust span{display:flex;align-items:center;gap:9px}
+.trust svg{opacity:.85}
+/* empathy block */
+.pain{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+.pain-list{display:grid;gap:12px}
+.pain-item{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 22px;display:flex;gap:14px;align-items:flex-start}
+.pain-item svg{color:var(--coral);flex:none;margin-top:3px}
+.pain-item p{font-size:15px;color:var(--muted)}
+.pain-item b{color:var(--ink)}
+/* path of help – signature timeline */
+.path{position:relative;margin-top:52px;display:grid;gap:0}
+.path-step{position:relative;display:grid;grid-template-columns:64px 1fr;gap:22px;padding-bottom:38px}
+.path-step:last-child{padding-bottom:0}
+.path-step::before{content:"";position:absolute;left:31px;top:64px;bottom:-2px;width:2px;
+  background:repeating-linear-gradient(180deg,var(--teal) 0 6px,transparent 6px 12px);opacity:.5}
+.path-step:last-child::before{display:none}
+.path-num{width:64px;height:64px;border-radius:50%;background:var(--sage);border:2px solid var(--teal);
+  display:grid;place-items:center;font:700 20px/1 var(--display);color:var(--teal-deep);flex:none}
+.path-body{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 26px}
+.path-body b{font:600 17px/1.35 var(--display);display:block;margin-bottom:6px}
+.path-body p{color:var(--muted);font-size:15px}
+.path-body .t{display:inline-block;margin-top:10px;background:var(--sage);color:var(--teal-deep);
+  font:600 12.5px/1 var(--body);padding:7px 12px;border-radius:99px}
+/* anonymity banner */
+.anon-banner{background:var(--teal-deep);border-radius:32px;color:#fff;padding:52px 48px;display:grid;grid-template-columns:1.3fr .7fr;gap:36px;align-items:center}
+.anon-banner h2{color:#fff}
+.anon-banner p{color:#BFE0D6;margin-top:12px;font-size:15.5px}
+.anon-banner ul{list-style:none;margin-top:20px;display:grid;gap:10px;color:#EAF6F1;font-size:14.5px}
+.anon-banner li{display:flex;gap:10px}
+.anon-banner li svg{flex:none;margin-top:3px;color:#7FD1BE}
+.anon-cta{text-align:center}
+.anon-cta .btn{width:100%}
+.anon-cta p{margin-top:12px;font-size:13px;color:#BFE0D6}
+/* doctors */
+.pain-photo{position:relative;margin-top:24px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+.pain-photo img{width:100%;height:220px;object-fit:cover}
+.pain-photo figcaption{position:absolute;left:0;right:0;bottom:0;padding:12px 20px;font:600 13px/1.4 var(--body);
+  color:#fff;background:linear-gradient(transparent,rgba(23,51,47,.8))}
+.docs-photo{position:relative;margin-top:40px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+.docs-photo img{width:100%;height:320px;object-fit:cover;object-position:center 30%}
+.docs-photo figcaption{position:absolute;left:0;right:0;bottom:0;padding:14px 24px;font:600 14px/1.4 var(--body);
+  color:#fff;background:linear-gradient(transparent,rgba(23,51,47,.8))}
+.docs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.doc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px 24px;text-align:center}
+.doc .ava{width:84px;height:84px;margin:0 auto 16px;border-radius:50%;background:linear-gradient(135deg,var(--sage),#CDE6DA);
+  display:grid;place-items:center;font:700 26px/1 var(--display);color:var(--teal-deep)}
+.doc b{font:600 17px/1.3 var(--display);display:block}
+.doc .role{color:var(--teal);font-size:13.5px;font-weight:600;margin:4px 0 10px}
+.doc p{color:var(--muted);font-size:14px}
+/* reviews */
+.reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.review{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px 24px;display:flex;flex-direction:column}
+.review .q{font-family:var(--display);font-size:40px;line-height:.6;color:var(--coral);margin-bottom:14px}
+.review p{font-size:14.5px;color:var(--muted);flex:1}
+.review footer{margin-top:16px;display:flex;align-items:center;gap:11px}
+.review .ava{width:40px;height:40px;border-radius:50%;background:var(--sage);display:grid;place-items:center;font:700 15px/1 var(--display);color:var(--teal-deep);flex:none}
+.review b{font-size:14px;display:block}
+.review small{color:var(--muted);font-size:12.5px}
+.review .stars{color:#F0A63C;font-size:13px;letter-spacing:1.5px;margin-top:2px}
+/* prices simple */
+.plist{max-width:680px;margin:40px auto 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.prow{display:flex;justify-content:space-between;gap:18px;align-items:baseline;padding:18px 26px;border-bottom:1px solid var(--line);font-size:15.5px}
+.prow:last-child{border-bottom:none}
+.prow b{font:700 16px/1 var(--body);white-space:nowrap}
+.prow small{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.prow.hl{background:var(--sage)}
+/* license */
+.lic{display:grid;grid-template-columns:auto auto 1fr;gap:20px;margin-top:40px;align-items:start;justify-content:center}
+.lic>a{display:block;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;
+  box-shadow:0 14px 34px rgba(23,51,47,.10);transition:transform .16s}
+.lic>a:hover{transform:translateY(-3px)}
+.lic>a img{width:210px;display:block}
+.lic-info{max-width:340px;font-size:14.5px;color:var(--muted)}
+.lic-info b{display:block;font:600 16.5px/1.35 var(--display);color:var(--ink);margin-bottom:10px}
+.lic-info p{margin-bottom:12px}
+.lic-note{border-left:3px solid var(--coral);padding-left:12px;font-size:13.5px}
+/* faq */
+.faq{max-width:740px;margin:40px auto 0}
+details{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:12px}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center;padding:18px 24px;font:600 15.5px/1.4 var(--body)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:500 24px/1 var(--display);color:var(--coral);transition:transform .2s;flex:none}
+details[open] summary::after{transform:rotate(45deg)}
+details .a{padding:0 24px 20px;color:var(--muted);font-size:14.5px}
+/* callback / final */
+.final-card{background:var(--card);border:1px solid var(--line);border-radius:32px;padding:52px 48px;
+  display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;box-shadow:0 30px 60px rgba(23,51,47,.08)}
+.final-card h2 em{font-style:normal;color:var(--teal)}
+.final-card .phones{margin-top:22px;display:grid;gap:10px}
+.final-card .phones a{font:700 24px/1.2 var(--display)}
+.final-card .phones a:hover{color:var(--teal)}
+.final-card .phones small{display:block;font:500 12.5px/1 var(--body);color:var(--muted);margin-bottom:2px}
+.cb-form{background:var(--sage);border-radius:24px;padding:30px 28px}
+.cb-form b{font:600 18px/1.3 var(--display);display:block;margin-bottom:6px}
+.cb-form p{font-size:13.5px;color:var(--muted);margin-bottom:18px}
+.cb-form input{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:14px;
+  padding:15px 18px;font:500 15px/1 var(--body);color:var(--ink);margin-bottom:12px}
+.cb-form input:focus{outline:2px solid var(--teal);border-color:var(--teal)}
+.cb-form .btn{width:100%}
+.cb-form .priv{font-size:11.5px;color:var(--muted);margin:10px 0 0;text-align:center}
+/* footer */
+footer.site{padding:44px 0 100px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);margin-top:40px}
+footer.site .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
+footer.site b{color:var(--ink);display:block;margin-bottom:10px;font-size:14.5px}
+footer.site a:hover{color:var(--teal)}
+.disclaimer{grid-column:1/-1;border-top:1px solid var(--line);padding-top:18px;font-size:12.5px}
+/* sticky mobile call */
+.callbar{position:fixed;left:12px;right:12px;bottom:12px;z-index:60;display:none;background:var(--coral);
+  border-radius:18px;box-shadow:0 14px 34px rgba(232,103,75,.42);padding:4px}
+.callbar a{display:flex;align-items:center;justify-content:center;gap:10px;color:#fff;font:700 16.5px/1 var(--body);padding:15px}
+@media (max-width:960px){
+  .hero .wrap{grid-template-columns:1fr;padding-top:52px;padding-bottom:60px}
+  .pain{grid-template-columns:1fr}
+  .docs,.reviews{grid-template-columns:1fr 1fr}
+  .anon-banner,.final-card{grid-template-columns:1fr;padding:36px 28px}
+  .nav{display:none}
+  footer.site .wrap{grid-template-columns:1fr 1fr}
+}
+@media (max-width:640px){
+  .section{padding:54px 0}
+  .docs,.reviews{grid-template-columns:1fr}
+  .lic{grid-template-columns:1fr 1fr}
+  .lic-info{grid-column:1/-1;max-width:none}
+  .lic>a img{width:100%}
+  .top-phone{display:none}
+  .callbar{display:block}
+  body{padding-bottom:84px}
+  .path-step{grid-template-columns:48px 1fr;gap:14px}
+  .path-num{width:48px;height:48px;font-size:16px}
+  .path-step::before{left:23px;top:50px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+.btn:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid #1D4ED8;outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="#top">
+      <span class="logo-mark"><img src="assets/logo-icon-white.svg" alt="" width="24" height="24" style="width:24px;height:24px"></span>
+      <span>Градусник<small>скорая помощь и наркология</small></span>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#help">С чем поможем</a><a href="#path">Как проходит</a><a href="#docs">Врачи</a><a href="#prices">Цены</a><a href="#faq">Вопросы</a>
+    </nav>
+    <a class="top-phone" href="tel:+79675008111">8 (967) 500-81-11<small>консультация бесплатно · 24/7</small></a>
+    <a class="btn btn-coral btn-top" href="tel:+79675008111">Позвонить</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Саратов и Энгельс · круглосуточно</span>
+      <h1>Близкому плохо?<br>Мы <em>рядом через 10 минут</em> – и никто не узнает</h1>
+      <p class="lead">Вывод из запоя, капельницы и врач на дом. Деликатно, анонимно и по-человечески: без осуждения, без постановки на учёт, без огласки.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-coral" href="tel:+79675008111">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></svg>
+          Позвонить и посоветоваться</a>
+        <a class="btn btn-line" href="https://wa.me/79675008111" rel="noopener">Написать в WhatsApp</a>
+      </div>
+      <p class="hero-note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 118 0v3"/></svg>Консультация врача по телефону – бесплатно и анонимно</p>
+    </div>
+    <aside class="promise" aria-label="Что вы получаете">
+      <div class="promise-head">
+        <span class="dot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2.5"/></svg></span>
+        <div><b>Бригада уже готова к выезду</b><small>2 бригады дежурят в Саратове и Энгельсе</small></div>
+      </div>
+      <ul>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Врач психиатр-нарколог, а не «медбрат по вызову»</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Современные препараты – «на лекарствах не экономят», пишут в отзывах</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Цена фиксируется по телефону, оплата – после помощи</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Машина без опознавательных знаков, врач в обычной одежде</li>
+      </ul>
+      <a class="btn btn-teal" href="tel:+78452988111">8 (8452) 98-81-11 · вызвать врача</a>
+      <p class="anon">Звонок нигде не регистрируется. Лицензия Л041-01020-64/00742789</p>
+    </aside>
+  </div>
+</section>
+
+<div class="trust">
+  <div class="wrap">
+    <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/></svg>Медицинская лицензия</span>
+    <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2.5"/></svg>Приезжаем за 10–15 минут</span>
+    <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 118 0v3"/></svg>Анонимно, не ставим на учёт</span>
+    <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-4.6-9.3-9A5.4 5.4 0 0112 6.3 5.4 5.4 0 0121.3 12c-2.3 4.4-9.3 9-9.3 9z"/></svg>35+ благодарных отзывов</span>
+  </div>
+</div>
+
+<!-- EMPATHY -->
+<section class="section" id="help">
+  <div class="wrap pain">
+    <div>
+      <span class="eyebrow">Мы понимаем, каково это</span>
+      <h2>Когда в семье беда, страшно звонить куда-то «официально»</h2>
+      <p class="sub">Боитесь огласки, учёта, осуждения – это нормально. Поэтому у нас всё устроено иначе: тихо приехали, помогли, уехали. Для соседей это был просто гость.</p>
+      <figure class="pain-photo"><img src="assets/medic-kit.jpg" alt="Фельдшер «Градусника» с укладкой у машины"><figcaption>Машина без опознавательных знаков, врач – в обычной одежде</figcaption></figure>
+      <div style="margin-top:26px"><a class="btn btn-coral" href="tel:+79675008111">Спросить врача анонимно</a></div>
+    </div>
+    <div class="pain-list">
+      <div class="pain-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5m0 4h.01"/><circle cx="12" cy="12" r="9"/></svg><p><b>«Муж пьёт третий день, сам не остановится».</b> Врач мягко снимет интоксикацию и поможет уснуть – уже сегодня.</p></div>
+      <div class="pain-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5m0 4h.01"/><circle cx="12" cy="12" r="9"/></svg><p><b>«Маме за 70, давление, в поликлинику не дойти».</b> Осмотр, ЭКГ и капельницы – дома, без очередей.</p></div>
+      <div class="pain-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5m0 4h.01"/><circle cx="12" cy="12" r="9"/></svg><p><b>«Боюсь, что поставят на учёт и узнают на работе».</b> Мы частная служба: никаких сведений в диспансер не передаём.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PATH – signature -->
+<section class="section" id="path" style="background:#F3F1EB">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow" style="justify-content:center">Путь помощи</span>
+      <h2>Что произойдёт после вашего звонка</h2>
+      <p class="sub">Самое сложное – набрать номер. Дальше мы всё берём на себя.</p>
+    </div>
+    <div class="path" style="max-width:720px;margin-left:auto;margin-right:auto">
+      <div class="path-step">
+        <span class="path-num">1</span>
+        <div class="path-body"><b>Вы звоните – отвечает врач, а не оператор</b><p>Расскажете, что случилось. Врач оценит состояние, скажет, что делать прямо сейчас, и назовёт точную стоимость.</p><span class="t">≈ 3 минуты · бесплатно</span></div>
+      </div>
+      <div class="path-step">
+        <span class="path-num">2</span>
+        <div class="path-body"><b>Бригада выезжает немедленно</b><p>Машина без опознавательных знаков. Пока едем – врач на связи и подсказывает, как помочь до приезда.</p><span class="t">10–15 минут по Саратову и Энгельсу</span></div>
+      </div>
+      <div class="path-step">
+        <span class="path-num">3</span>
+        <div class="path-body"><b>Помощь дома, спокойно и без спешки</b><p>Осмотр, давление, ЭКГ при необходимости. Капельница подбирается по состоянию: детокс, сердце, печень, сон. Врач остаётся, пока не станет легче.</p><span class="t">1–1,5 часа у пациента</span></div>
+      </div>
+      <div class="path-step">
+        <span class="path-num">4</span>
+        <div class="path-body"><b>Наутро – контрольный звонок</b><p>Оставим препараты на первые сутки и рекомендации. Утром врач сам позвонит узнать самочувствие. Если нужно – подскажем следующий шаг, вплоть до кодирования.</p><span class="t">поддержка после визита</span></div>
+      </div>
+    </div>
+    <div class="center" style="margin-top:38px"><a class="btn btn-coral" href="tel:+79675008111">Сделать первый шаг – позвонить</a></div>
+  </div>
+</section>
+
+<!-- ANON BANNER -->
+<section class="section">
+  <div class="wrap">
+    <div class="anon-banner">
+      <div>
+        <h2>Анонимность – не обещание, а технология работы</h2>
+        <p>Мы построили сервис так, чтобы о вызове знали только вы и врач.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Не передаём данные в диспансер, поликлинику, работодателю</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Не ставим на нарко- и психучёт – это не наша функция</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Врачебная тайна закреплена законом – ст. 13 323-ФЗ</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Договор и чек оформляем только по вашему желанию</li>
+        </ul>
+      </div>
+      <div class="anon-cta">
+        <a class="btn btn-coral" href="tel:+78452988111">8 (8452) 98-81-11</a>
+        <p>Звонок бесплатный и ни к чему не обязывает</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOCTORS -->
+<section class="section" id="docs" style="padding-top:0">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow" style="justify-content:center">Кто приедет</span>
+      <h2>Врачи, которых благодарят по имени</h2>
+      <p class="sub">В отзывах на ПроДокторов и 2ГИС пациенты называют наших врачей поимённо – для медицины на дому это лучшая рекомендация.</p>
+    </div>
+    <figure class="docs-photo"><img src="assets/doctor-team.jpg" alt="Команда врачей клиники «Градусник»"><figcaption>Команда «Градусника»: психиатры-наркологи, терапевт, фельдшеры</figcaption></figure>
+    <div class="docs">
+      <div class="doc"><span class="ava">ЮМ</span><b>Юрий М.</b><div class="role">Врач психиатр-нарколог</div><p>Стаж 15+ лет. Ведёт самые сложные случаи: длительные запои, сопутствующие болезни сердца.</p></div>
+      <div class="doc"><span class="ava">ВГ</span><b>Владимир Г.</b><div class="role">Врач психиатр-нарколог</div><p>Деликатно работает с пациентами, которые «против врачей». Умеет договориться и помочь.</p></div>
+      <div class="doc"><span class="ava">ЕА</span><b>Евгений А.</b><div class="role">Врач-терапевт</div><p>Домашние визиты к пожилым пациентам: давление, ЭКГ, восстановление сна и режима.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section" style="background:#F3F1EB">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow" style="justify-content:center">Отзывы</span>
+      <h2>Что говорят семьи, которым мы помогли</h2>
+    </div>
+    <div class="reviews">
+      <div class="review"><div class="q">“</div><p>Приезжают быстро, помощь оказывают качественно. На препаратах не экономят. Спасибо врачу – встретил, всё объяснил, было спокойно, как дома.</p><footer><span class="ava">О</span><div><b>Ольга</b><small>Саратов</small><div class="stars">★★★★★</div></div></footer></div>
+      <div class="review"><div class="q">“</div><p>Сняли интоксикацию отлично, быстро встала на ноги. Главное – никакой огласки: ни соседи, ни работа ничего не узнали.</p><footer><span class="ava">И</span><div><b>Ирина</b><small>Энгельс</small><div class="stars">★★★★★</div></div></footer></div>
+      <div class="review"><div class="q">“</div><p>Обращались для отца. Врач вежливый, ответил на все вопросы, дал рекомендации. Появился сон, наладилось настроение. Рекомендую.</p><footer><span class="ava">А</span><div><b>Александр</b><small>Саратов</small><div class="stars">★★★★★</div></div></footer></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICES -->
+<section class="section" id="prices">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow" style="justify-content:center">Цены</span>
+      <h2>Прозрачные цены, названные до выезда</h2>
+      <p class="sub">Сумма фиксируется по телефону и не меняется на месте. Оплата после оказания помощи.</p>
+    </div>
+    <div class="plist">
+      <div class="prow"><div>Консультация врача по телефону<small>оценка состояния, что делать прямо сейчас</small></div><b>бесплатно</b></div>
+      <div class="prow"><div>Стандартное очищение · 400 мл<small>похмелье, лёгкая интоксикация</small></div><b>3 200 ₽</b></div>
+      <div class="prow hl"><div>Усиленное очищение · 400–600 мл<small>запой 2–5 дней · выбирают чаще всего</small></div><b>4 500 ₽</b></div>
+      <div class="prow"><div>Двойное очищение · 600+ мл<small>длительный запой, тяжёлое состояние</small></div><b>5 900 ₽</b></div>
+      <div class="prow"><div>Вызов бригады скорой помощи<small>осмотр, диагностика, неотложная помощь</small></div><b>от 2 400 ₽</b></div>
+      <div class="prow"><div>Витаминная капельница<small>восстановление, упадок сил</small></div><b>от 2 500 ₽</b></div>
+    </div>
+    <div class="center" style="margin-top:30px"><a class="btn btn-teal" href="tel:+79675008111">Узнать точную цену у врача</a></div>
+  </div>
+</section>
+
+<!-- LICENSE -->
+<section class="section" id="license" style="padding-top:0">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow" style="justify-content:center">Документы</span>
+      <h2>Лицензия, которую можно проверить</h2>
+      <p class="sub">Мы – лицензированная медицинская организация, а не «частник по объявлению». Вот выписка из реестра лицензий – целиком, обе страницы.</p>
+    </div>
+    <div class="lic">
+      <a href="assets/license-1.png" target="_blank" rel="noopener"><img src="assets/license-1.png" alt="Выписка из реестра лицензий ООО «Градусник», страница 1"></a>
+      <a href="assets/license-2.png" target="_blank" rel="noopener"><img src="assets/license-2.png" alt="Выписка из реестра лицензий ООО «Градусник», страница 2"></a>
+      <div class="lic-info">
+        <b>Реестровый номер Л041-01020-64/00742789</b>
+        <p>Выдана Министерством здравоохранения Саратовской области. Лицензиат: ООО «Градусник», ИНН 6451023386, ОГРН 1236400009031.</p>
+        <p>Виды работ: скорая медицинская помощь, психиатрия-наркология, терапия.</p>
+        <p class="lic-note">Врач привозит лицензию с собой – попросите показать, это нормально.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq" style="padding-top:0">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow" style="justify-content:center">Частые вопросы</span>
+      <h2>О чём спрашивают перед звонком</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>Человек не хочет лечиться. Вы поможете?</summary><div class="a">Да, это самая частая ситуация. Позвоните – врач подскажет, как поговорить с близким, а на месте наши наркологи умеют мягко договариваться. Принудительно не лечим – но убеждать умеем.</div></details>
+      <details><summary>Это точно анонимно?</summary><div class="a">Да. Мы частная лицензированная служба и по закону храним врачебную тайну. Никаких данных в диспансер или на работу не передаём, на учёт не ставим, машина – без опознавательных знаков.</div></details>
+      <details><summary>Сколько стоит и когда платить?</summary><div class="a">Капельницы – от 3 200 ₽, вызов бригады – от 2 400 ₽. Точную сумму врач назовёт по телефону до выезда, она фиксируется. Оплата после оказания помощи: наличные, карта, перевод.</div></details>
+      <details><summary>Кто приедет?</summary><div class="a">Врач психиатр-нарколог или терапевт с фельдшером – в зависимости от ситуации. Все с медицинским образованием и опытом от 10 лет, лицензия всегда с собой.</div></details>
+      <details><summary>А если станет хуже после вашего отъезда?</summary><div class="a">Мы оставляем прямой телефон врача и звоним сами утром. При ухудшении бригада возвращается, при необходимости организуем госпитализацию в стационар.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="section" id="contacts" style="padding-top:0">
+  <div class="wrap">
+    <div class="final-card">
+      <div>
+        <h2>Не оставайтесь с этим <em>один на один</em></h2>
+        <p class="sub">Позвоните сейчас – врач выслушает, подскажет и приедет. Круглосуточно, Саратов и Энгельс.</p>
+        <div class="phones">
+          <a href="tel:+79675008111"><small>мобильный, WhatsApp / Viber</small>8 (967) 500-81-11</a>
+          <a href="tel:+78452988111"><small>городской</small>8 (8452) 98-81-11</a>
+        </div>
+      </div>
+      <form class="cb-form" onsubmit="event.preventDefault();this.querySelector('button').textContent='Спасибо! Перезвоним через минуту';">
+        <b>Неудобно говорить?</b>
+        <p>Оставьте номер – врач перезвонит сам и тихо всё объяснит.</p>
+        <label for="cb-name" style="position:absolute;left:-9999px">Имя</label>
+        <input id="cb-name" type="text" name="name" placeholder="Как к вам обращаться" autocomplete="name">
+        <label for="cb-phone" style="position:absolute;left:-9999px">Телефон</label>
+        <input id="cb-phone" type="tel" name="phone" placeholder="+7 (___) ___-__-__" required autocomplete="tel">
+        <button class="btn btn-coral" type="submit">Жду звонка врача</button>
+        <p class="priv">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности. Номер нужен только для звонка.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <img src="assets/logo-icon.svg" alt="" width="36" height="36" style="width:36px;height:36px;margin-bottom:10px">
+      <b>«Градусник» – частная скорая помощь и наркология</b>
+      г. Саратов, ул. Большая Садовая, 54<br>Саратов · Энгельс · область · 24/7
+      <div style="margin-top:12px;font-size:12.5px">Лицензия Л041-01020-64/00742789<br>ИНН 6451023386 · ОГРН 1236400009031</div>
+    </div>
+    <div>
+      <b>Связаться</b>
+      <a href="tel:+79675008111">8 (967) 500-81-11</a><br>
+      <a href="tel:+78452988111">8 (8452) 98-81-11</a><br>
+      <a href="mailto:skoraya.gradusnik@mail.ru">skoraya.gradusnik@mail.ru</a>
+    </div>
+    <div>
+      <b>Документы</b>
+      <a href="#license">Лицензия</a><br><a href="#">Политика конфиденциальности</a><br><a href="#">Согласие на обработку данных</a>
+    </div>
+    <div class="disclaimer">ИМЕЮТСЯ ПРОТИВОПОКАЗАНИЯ. НЕОБХОДИМА КОНСУЛЬТАЦИЯ СПЕЦИАЛИСТА. Информация на сайте не является публичной офертой. При состояниях, угрожающих жизни, звоните также 103 / 112.</div>
+  </div>
+</footer>
+
+<div class="callbar"><a href="tel:+79675008111"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></svg>Позвонить врачу – бесплатно</a></div>
+
+</body>
+</html>
