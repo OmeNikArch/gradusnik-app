@@ -332,6 +332,17 @@
     <button class="cl" type="button" id="ios-add-cl" aria-label="Скрыть подсказку">&times;</button>
   </div>
 
+<!-- Яндекс.Метрика. webvisor выключен намеренно: в приложении вводится адрес вызова -->
+<script type="text/javascript">
+  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+  m[i].l=1*new Date();
+  for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
+  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+  (window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=112356393','ym');
+  ym(112356393,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:false});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/112356393" style="position:absolute;left:-9999px" alt=""></div></noscript>
+
 <script>
   const $ = id => document.getElementById(id);
   const PHONE = '+79675008111';
@@ -370,6 +381,7 @@
 
   // История вызовов: локально на телефоне
   function logCall(kind){
+    ymGoal('call', {tip: kind, istochnik: srcTag()});
     try{
       const h = JSON.parse(localStorage.getItem('gradusnik_hist') || '[]');
       h.unshift({kind, at: new Date().toLocaleString('ru-RU', {day:'numeric', month:'long', hour:'2-digit', minute:'2-digit'})});
@@ -422,6 +434,57 @@
       }
     }
   })();
+
+  // ——— Аналитика: Яндекс.Метрика ———
+  // AppMetrica здесь не годится: её SDK вшивается в нативное приложение,
+  // в веб-страницу вшивать нечего. Установки на iPhone считаем здесь.
+  var YM_ID = 112356393;
+  function ymGoal(name, params){
+    try{ if(window.ym) ym(YM_ID, 'reachGoal', name, params || {}); }catch(e){}
+  }
+
+  // Канал из ссылки трекера (?from=lift|site|booklet|vizitka) — запоминаем при первом заходе
+  (function(){
+    try{
+      var f = new URLSearchParams(location.search).get('from');
+      if(f) localStorage.setItem('gradusnik_src', f);
+    }catch(e){}
+  })();
+  function srcTag(){
+    try{ return localStorage.getItem('gradusnik_src') || 'без метки'; }catch(e){ return 'без метки'; }
+  }
+
+  (function(){
+    var standalone = navigator.standalone === true ||
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+
+    if(!standalone){
+      // Заход из браузера по ссылке трекера. Канал здесь есть гарантированно,
+      // поэтому охват по каналам меряем именно тут.
+      try{
+        if(new URLSearchParams(location.search).get('from')){
+          ymGoal('pwa_visit', {istochnik: srcTag()});
+        }
+      }catch(e){}
+      return;
+    }
+
+    // Запуск с домашнего экрана. Safari не сообщает о самом добавлении иконки
+    // (события appinstalled в нём нет), поэтому «установкой» считаем первый запуск
+    // в standalone — это и честнее: человек не просто добавил иконку, а пользуется.
+    var was = false;
+    try{ was = localStorage.getItem('gradusnik_installed') === '1'; }catch(e){}
+    if(!was){
+      try{ localStorage.setItem('gradusnik_installed','1'); }catch(e){}
+      ymGoal('pwa_install', {istochnik: srcTag()});
+    }
+    ymGoal('pwa_open', {istochnik: srcTag()});
+  })();
+
+  // Разделы переключаются без перезагрузки — сообщаем Метрике вручную
+  window.addEventListener('hashchange', function(){
+    try{ if(window.ym) ym(YM_ID, 'hit', location.href, {referer: document.referrer}); }catch(e){}
+  });
 </script>
 </body>
 </html>
